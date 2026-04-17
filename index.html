@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ember Sports — Pickleball Shanghai</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --orange:     #F4611A;
+      --orange-lt:  #FF8C42;
+      --orange-bg:  #FFF4EE;
+      --orange-sel: #FDDECE;
+      --black:      #111111;
+      --grey:       #555555;
+      --light:      #F8F8F8;
+      --white:      #FFFFFF;
+      --radius:     12px;
+      --transition: .2s ease;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Helvetica Neue', Arial, sans-serif; color: var(--black); background: var(--white); line-height: 1.6; }
+    a { color: inherit; text-decoration: none; }
+    button, input, select { font-family: inherit; font-size: inherit; outline: none; border: none; }
+
+    /* Nav */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5%; height: 64px;
+      background: rgba(255,255,255,.92); backdrop-filter: blur(10px);
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .nav-logo { font-size: 1.25rem; font-weight: 800; letter-spacing: -.5px; }
+    .nav-logo span { color: var(--orange); }
+    .nav-links { display: flex; gap: 2rem; font-size: .9rem; font-weight: 500; }
+    .nav-links a { color: var(--grey); transition: color var(--transition); }
+    .nav-links a:hover { color: var(--orange); }
+    .nav-right { display: flex; align-items: center; gap: .75rem; }
+    .lang-toggle {
+      display: flex; align-items: center;
+      border: 2px solid #e0e0e0; border-radius: 50px;
+      overflow: hidden; font-size: .78rem; font-weight: 700;
+    }
+    .lang-btn {
+      padding: .3rem .75rem; cursor: pointer;
+      background: transparent; color: var(--grey);
+      transition: background var(--transition), color var(--transition);
+      border: none;
+    }
+    .lang-btn.active { background: var(--orange); color: var(--white); }
+    .nav-cta {
+      background: var(--orange); color: var(--white);
+      padding: .5rem 1.25rem; border-radius: 50px;
+      font-size: .875rem; font-weight: 600; cursor: pointer;
+      transition: background var(--transition), transform var(--transition);
+    }
+    .nav-cta:hover { background: var(--orange-lt); transform: translateY(-1px); }
+
+    /* Hero */
+    #hero {
+      min-height: 100vh; display: flex; flex-direction: column;
+      justify-content: center; align-items: flex-start;
+      padding: 120px 5% 80px; background: var(--orange-bg);
+      position: relative; overflow: hidden;
+    }
+    .hero-tag {
+      display: inline-block; background: var(--orange); color: var(--white);
+      font-size: .75rem; font-weight: 700; letter-spacing: 1.5px;
+      text-transform: uppercase; padding: .3rem .9rem; border-radius: 50px; margin-bottom: 1.5rem;
+    }
+    .hero-title { font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 900; line-height: 1.05; letter-spacing: -2px; max-width: 700px; }
+    .hero-title em { color: var(--orange); font-style: normal; }
+    .hero-sub { margin-top: 1.5rem; max-width: 460px; color: var(--grey); font-size: 1.05rem; }
+    .hero-actions { display: flex; gap: 1rem; margin-top: 2.5rem; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--orange); color: var(--white); padding: .85rem 2rem;
+      border-radius: 50px; font-weight: 700; font-size: 1rem; cursor: pointer; border: none;
+      transition: background var(--transition), transform var(--transition);
+    }
+    .btn-primary:hover { background: var(--orange-lt); transform: translateY(-2px); }
+    .btn-ghost {
+      background: transparent; color: var(--black); padding: .85rem 2rem;
+      border-radius: 50px; font-weight: 600; font-size: 1rem; cursor: pointer;
+      border: 2px solid #ddd; transition: border-color var(--transition), transform var(--transition);
+    }
+    .btn-ghost:hover { border-color: var(--orange); transform: translateY(-2px); }
+    .hero-stats { display: flex; gap: 3rem; margin-top: 4rem; }
+    .stat-num { font-size: 2rem; font-weight: 900; color: var(--orange); }
+    .stat-label { font-size: .8rem; color: var(--grey); font-weight: 500; margin-top: .1rem; }
+
+    /* Sections */
+    section { padding: 100px 5%; }
+    .section-tag {
+      display: inline-block; background: var(--orange-bg); color: var(--orange);
+      font-size: .75rem; font-weight: 700; letter-spacing: 1.5px;
+      text-transform: uppercase; padding: .3rem .9rem; border-radius: 50px; margin-bottom: 1rem;
+    }
+    .section-title { font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 800; letter-spacing: -1px; line-height: 1.15; max-width: 600px; }
+    .section-sub { max-width: 520px; color: var(--grey); margin-top: .75rem; font-size: 1rem; }
+
+    /* About */
+    #about { background: var(--white); }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; margin-top: 4rem; }
+    .about-features { display: flex; flex-direction: column; gap: 1.5rem; }
+    .feature-item { display: flex; gap: 1rem; align-items: flex-start; }
+    .feature-icon { flex-shrink: 0; width: 44px; height: 44px; background: var(--orange-bg); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; }
+    .feature-text h4 { font-weight: 700; font-size: .95rem; }
+    .feature-text p { font-size: .875rem; color: var(--grey); margin-top: .2rem; }
+    .about-visual { background: var(--orange-bg); border-radius: 24px; height: 400px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+    .court-diagram { display: grid; grid-template-columns: repeat(4,1fr); grid-template-rows: repeat(2,1fr); gap: 8px; padding: 24px; width: 100%; height: 100%; }
+    .mini-court { background: var(--orange); border-radius: 8px; opacity: .7; display: flex; align-items: center; justify-content: center; color: var(--white); font-weight: 700; font-size: .75rem; transition: opacity var(--transition); }
+    .mini-court:hover { opacity: 1; }
+
+    /* Courts */
+    #courts { background: var(--light); }
+    .courts-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; margin-top: 3rem; }
+    .court-card { background: var(--white); border-radius: var(--radius); padding: 1.5rem; border: 2px solid transparent; cursor: pointer; transition: border-color var(--transition), transform var(--transition), box-shadow var(--transition); }
+    .court-card:hover { border-color: var(--orange); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(244,97,26,.15); }
+    .court-num { width: 40px; height: 40px; background: var(--orange-bg); color: var(--orange); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: .9rem; }
+    .court-name { font-weight: 700; font-size: .95rem; margin-top: .75rem; }
+    .court-price { color: var(--orange); font-weight: 600; font-size: .875rem; margin-top: .25rem; }
+    .court-status { display: inline-block; font-size: .7rem; font-weight: 600; padding: .15rem .5rem; border-radius: 50px; margin-top: .5rem; }
+    .status-available { background: #edfbf3; color: #1a9e5c; }
+    .status-busy      { background: #fff0ee; color: var(--orange); }
+
+    /* Booking */
+    #booking { background: var(--white); }
+    .booking-controls { display: flex; gap: 1.25rem; align-items: flex-end; flex-wrap: wrap; margin-top: 2.5rem; margin-bottom: 2rem; padding: 1.5rem; background: var(--light); border-radius: var(--radius); }
+    .ctrl-group { display: flex; flex-direction: column; gap: .4rem; }
+    .ctrl-group label { font-size: .75rem; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; color: var(--grey); }
+    .ctrl-group input, .ctrl-group select { padding: .65rem 1rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: .9rem; background: var(--white); cursor: pointer; transition: border-color var(--transition); }
+    .ctrl-group input:focus, .ctrl-group select:focus { border-color: var(--orange); }
+
+    .grid-outer { overflow-x: auto; border-radius: var(--radius); border: 1px solid #ebebeb; }
+    .avail-table { border-collapse: collapse; width: 100%; min-width: 680px; }
+    .avail-table thead th { background: var(--light); padding: .6rem .5rem; font-size: .78rem; font-weight: 700; letter-spacing: .4px; text-align: center; border-bottom: 2px solid #e8e8e8; white-space: nowrap; }
+    .avail-table thead th:first-child { text-align: left; padding-left: 1rem; min-width: 72px; }
+    .avail-table thead th:not(:first-child) { min-width: 80px; color: var(--grey); }
+    .time-label { padding: .45rem .5rem .45rem 1rem; font-size: .78rem; font-weight: 600; color: var(--grey); white-space: nowrap; border-right: 1px solid #ebebeb; background: var(--light); }
+    .acell { padding: 0; height: 36px; text-align: center; border: 1px solid #f0f0f0; position: relative; transition: background var(--transition); }
+    .acell.av { background: var(--white); cursor: pointer; }
+    .acell.av:hover { background: var(--orange-bg); }
+    .acell.bk { background: #f5f5f5; cursor: not-allowed; }
+    .acell.bk::after { content: ''; position: absolute; inset: 25% 15%; background: #d8d8d8; border-radius: 3px; }
+    .acell.sel { background: var(--orange); cursor: pointer; }
+    .acell.sel-cont { background: var(--orange-sel); cursor: pointer; }
+    .acell.sel::after, .acell.sel-cont::after { display: none; }
+
+    .grid-legend { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 1rem; font-size: .8rem; color: var(--grey); }
+    .legend-item { display: flex; align-items: center; gap: .4rem; }
+    .legend-dot { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; border: 1px solid #e0e0e0; }
+    .ld-av  { background: var(--white); }
+    .ld-bk  { background: #f0f0f0; }
+    .ld-sel { background: var(--orange); border-color: var(--orange); }
+
+    .booking-bottom { display: grid; grid-template-columns: 1fr 360px; gap: 3rem; margin-top: 3rem; align-items: start; }
+    .booking-info { display: flex; flex-direction: column; gap: 1.25rem; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-group { display: flex; flex-direction: column; gap: .4rem; }
+    .form-group label { font-size: .75rem; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; color: var(--grey); }
+    .form-group input, .form-group select { padding: .8rem 1rem; border: 2px solid #eee; border-radius: var(--radius); font-size: .9rem; background: var(--white); cursor: pointer; width: 100%; transition: border-color var(--transition); }
+    .form-group input:focus, .form-group select:focus { border-color: var(--orange); }
+
+    .booking-summary { background: var(--orange-bg); border-radius: 20px; padding: 2rem; position: sticky; top: 84px; }
+    .summary-title { font-weight: 800; font-size: 1.05rem; margin-bottom: 1.25rem; }
+    .summary-row { display: flex; justify-content: space-between; font-size: .875rem; padding: .45rem 0; border-bottom: 1px solid rgba(244,97,26,.12); }
+    .summary-row .label { color: var(--grey); }
+    .summary-row .val { font-weight: 600; }
+    .summary-total { display: flex; justify-content: space-between; font-size: 1.1rem; font-weight: 800; padding-top: 1rem; margin-top: .5rem; border-top: 2px solid var(--orange); }
+    .summary-total .val { color: var(--orange); }
+    .no-selection-hint { text-align: center; padding: 1.5rem 0; font-size: .875rem; color: var(--grey); font-style: italic; }
+
+    /* Modal */
+    .overlay { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,.5); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .25s ease; }
+    .overlay.active { opacity: 1; pointer-events: all; }
+    .modal { background: var(--white); border-radius: 24px; padding: 2.5rem; width: 100%; max-width: 480px; transform: translateY(20px); transition: transform .25s ease; position: relative; }
+    .overlay.active .modal { transform: translateY(0); }
+    .modal-close { position: absolute; top: 1.25rem; right: 1.25rem; background: var(--light); border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; transition: background var(--transition); }
+    .modal-close:hover { background: #eee; }
+    .modal-title { font-size: 1.4rem; font-weight: 800; margin-bottom: .25rem; }
+    .modal-sub { color: var(--grey); font-size: .875rem; margin-bottom: 2rem; }
+    .payment-methods { display: flex; gap: .75rem; margin-bottom: 1.5rem; }
+    .pay-method { flex: 1; padding: .75rem; border: 2px solid #eee; border-radius: var(--radius); text-align: center; cursor: pointer; font-size: .8rem; font-weight: 600; transition: all var(--transition); }
+    .pay-method:hover, .pay-method.active { border-color: var(--orange); background: var(--orange-bg); color: var(--orange); }
+    .pay-icon { font-size: 1.4rem; display: block; margin-bottom: .3rem; }
+    .card-fields { display: flex; flex-direction: column; gap: 1rem; }
+    .card-row { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+    .modal .form-group input { padding: .75rem 1rem; border: 2px solid #eee; border-radius: var(--radius); }
+    .modal .form-group input:focus { border-color: var(--orange); }
+    .pay-btn { width: 100%; padding: 1rem; background: var(--orange); color: var(--white); border: none; border-radius: 50px; font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 1.5rem; transition: background var(--transition), transform var(--transition); }
+    .pay-btn:hover { background: var(--orange-lt); transform: translateY(-1px); }
+    .secure-note { text-align: center; font-size: .75rem; color: var(--grey); margin-top: .75rem; }
+
+    #success-screen { display: none; flex-direction: column; align-items: center; text-align: center; }
+    #success-screen.show { display: flex; }
+    .success-icon { width: 72px; height: 72px; background: var(--orange); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: var(--white); margin-bottom: 1.25rem; }
+
+    /* Footer */
+    footer { background: var(--black); color: #aaa; padding: 60px 5% 40px; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 4rem; margin-bottom: 3rem; }
+    .footer-brand .nav-logo { font-size: 1.4rem; color: var(--white); }
+    .footer-brand p { font-size: .875rem; margin-top: .75rem; line-height: 1.7; max-width: 280px; }
+    .footer-col h5 { color: var(--white); font-size: .85rem; font-weight: 700; margin-bottom: 1rem; letter-spacing: .5px; text-transform: uppercase; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: .5rem; }
+    .footer-col ul li { font-size: .875rem; }
+    .footer-bottom { border-top: 1px solid #222; padding-top: 1.5rem; display: flex; justify-content: space-between; font-size: .8rem; }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .about-grid, .booking-bottom { grid-template-columns: 1fr; }
+      .courts-grid { grid-template-columns: repeat(2,1fr); }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .booking-summary { position: static; }
+      #hero::after { display: none; }
+    }
+    @media (max-width: 600px) {
+      .courts-grid { grid-template-columns: repeat(2,1fr); }
+      .form-row { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+      .hero-stats { gap: 1.5rem; }
+      .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
+      .footer-bottom { flex-direction: column; gap: .5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo"><span>Ember</span> Sports</div>
+  <div class="nav-links">
+    <a href="#about"   data-i18n="nav_about">About</a>
+    <a href="#courts"  data-i18n="nav_courts">Courts</a>
+    <a href="#booking" data-i18n="nav_book">Book</a>
+    <a href="#contact" data-i18n="nav_contact">Contact</a>
+  </div>
+  <div class="nav-right">
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('en')">EN</button>
+      <button class="lang-btn"        onclick="setLang('zh')">中文</button>
+    </div>
+    <button class="nav-cta" data-i18n="nav_cta" onclick="document.getElementById('booking').scrollIntoView({behavior:'smooth'})">Book a Court</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <span class="hero-tag" data-i18n="hero_tag">Shanghai's Premier Pickleball Venue</span>
+  <h1 class="hero-title">Play Hard.<br><em>Play Ember.</em></h1>
+  <p class="hero-sub" data-i18n="hero_sub">8 professional pickleball courts in the heart of Shanghai. Built for players who take their game seriously.</p>
+  <div class="hero-actions">
+    <button class="btn-primary" data-i18n="hero_cta1" onclick="document.getElementById('booking').scrollIntoView({behavior:'smooth'})">Book a Court</button>
+    <button class="btn-ghost"   data-i18n="hero_cta2" onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'})">Learn More</button>
+  </div>
+  <div class="hero-stats">
+    <div><div class="stat-num">8</div><div class="stat-label" data-i18n="stat1">Pickleball Courts</div></div>
+    <div><div class="stat-num">7AM</div><div class="stat-label" data-i18n="stat2">Opens Daily</div></div>
+    <div><div class="stat-num">10PM</div><div class="stat-label" data-i18n="stat3">Closes Daily</div></div>
+  </div>
+
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <span class="section-tag" data-i18n="about_tag">About Us</span>
+  <h2 class="section-title" data-i18n="about_title">Shanghai's home for pickleball</h2>
+  <p class="section-sub" data-i18n="about_sub">Ember Sports is a dedicated pickleball facility committed to growing the sport in Shanghai — from beginners to competitive players.</p>
+  <div class="about-grid">
+    <div class="about-features">
+      <div class="feature-item">
+        <div class="feature-icon">🏓</div>
+        <div class="feature-text">
+          <h4 data-i18n="f1_title">8 Professional Courts</h4>
+          <p  data-i18n="f1_body">Tournament-grade surfaces with professional nets and proper court markings — always in top condition.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">💡</div>
+        <div class="feature-text">
+          <h4 data-i18n="f2_title">Full LED Lighting</h4>
+          <p  data-i18n="f2_body">Play morning to night with stadium-quality lighting designed to reduce eye strain on court.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🎯</div>
+        <div class="feature-text">
+          <h4 data-i18n="f3_title">All Skill Levels Welcome</h4>
+          <p  data-i18n="f3_body">Whether you're picking up a paddle for the first time or competing in leagues, Ember is your court.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">📍</div>
+        <div class="feature-text">
+          <h4 data-i18n="f4_title">Central Shanghai Location</h4>
+          <p  data-i18n="f4_body">Conveniently located with easy metro access, parking on-site, and a welcoming lounge area.</p>
+        </div>
+      </div>
+    </div>
+    <div class="about-visual">
+      <div class="court-diagram">
+        <div class="mini-court">C1</div><div class="mini-court">C2</div>
+        <div class="mini-court">C3</div><div class="mini-court">C4</div>
+        <div class="mini-court">C5</div><div class="mini-court">C6</div>
+        <div class="mini-court">C7</div><div class="mini-court">C8</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COURTS -->
+<section id="courts">
+  <span class="section-tag" data-i18n="courts_tag">Our Courts</span>
+  <h2 class="section-title" data-i18n="courts_title">8 courts, ready to play</h2>
+  <p class="section-sub" data-i18n="courts_sub">All courts are tournament-grade. Check live availability in the booking section below.</p>
+  <div class="courts-grid" id="courtGrid"></div>
+</section>
+
+<!-- BOOKING -->
+<section id="booking">
+  <span class="section-tag" data-i18n="book_tag">Reservations</span>
+  <h2 class="section-title" data-i18n="book_title">Book your court</h2>
+  <p class="section-sub" data-i18n="book_sub">Pick a date and duration, then click any available slot in the grid to reserve it.</p>
+
+  <div class="booking-controls">
+    <div class="ctrl-group">
+      <label data-i18n="ctrl_date">Date</label>
+      <input type="date" id="bookDate" onchange="renderGrid()" />
+    </div>
+    <div class="ctrl-group">
+      <label data-i18n="ctrl_dur">Duration</label>
+      <select id="duration" onchange="clearSelection(); updateSummary();">
+        <option value="1"   data-i18n="dur1">1 hour</option>
+        <option value="1.5" data-i18n="dur2">1.5 hours</option>
+        <option value="2" selected data-i18n="dur3">2 hours</option>
+        <option value="3"   data-i18n="dur4">3 hours</option>
+      </select>
+    </div>
+    <div class="ctrl-group">
+      <label data-i18n="ctrl_players">Players</label>
+      <select id="players" onchange="updateSummary()">
+        <option value="2" data-i18n="p2">2 players</option>
+        <option value="3" data-i18n="p3">3 players</option>
+        <option value="4" selected data-i18n="p4">4 players</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="grid-outer">
+    <table class="avail-table">
+      <thead><tr id="tableHead"></tr></thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+
+  <div class="grid-legend">
+    <div class="legend-item"><div class="legend-dot ld-av"></div><span data-i18n="leg_av">Available</span></div>
+    <div class="legend-item"><div class="legend-dot ld-bk"></div><span data-i18n="leg_bk">Booked</span></div>
+    <div class="legend-item"><div class="legend-dot ld-sel"></div><span data-i18n="leg_sel">Your selection</span></div>
+  </div>
+
+  <div class="booking-bottom">
+    <div class="booking-info">
+      <div class="form-row">
+        <div class="form-group">
+          <label data-i18n="lbl_fname">First Name</label>
+          <input type="text" id="fname" data-i18n-placeholder="ph_fname" placeholder="Wei" />
+        </div>
+        <div class="form-group">
+          <label data-i18n="lbl_lname">Last Name</label>
+          <input type="text" id="lname" data-i18n-placeholder="ph_lname" placeholder="Chen" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label data-i18n="lbl_email">Email</label>
+        <input type="email" id="email" placeholder="you@example.com" />
+      </div>
+      <div class="form-group">
+        <label data-i18n="lbl_phone">Phone / WeChat</label>
+        <input type="tel" id="phone" placeholder="+86 138 0000 0000" />
+      </div>
+      <button class="btn-primary" data-i18n="btn_pay" style="align-self:flex-start;padding:.85rem 2.5rem;margin-top:.5rem;" onclick="openPayment()">Continue to Payment →</button>
+    </div>
+
+    <div class="booking-summary">
+      <div class="summary-title" data-i18n="sum_title">Booking Summary</div>
+      <div id="summary-content">
+        <div class="no-selection-hint" data-i18n="sum_hint">Select a slot in the grid above</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PAYMENT MODAL -->
+<div class="overlay" id="payOverlay">
+  <div class="modal">
+    <button class="modal-close" onclick="closePayment()">✕</button>
+    <div id="pay-form-screen">
+      <div class="modal-title" data-i18n="modal_title">Complete Payment</div>
+      <div class="modal-sub" id="modal-sub">—</div>
+      <div class="payment-methods">
+        <div class="pay-method active" onclick="selectMethod(this,'wechat')"><span class="pay-icon">💬</span>WeChat Pay</div>
+        <div class="pay-method"        onclick="selectMethod(this,'alipay')"><span class="pay-icon">🔵</span>Alipay</div>
+        <div class="pay-method"        onclick="selectMethod(this,'card')"><span class="pay-icon">💳</span><span data-i18n="pay_card">Card</span></div>
+      </div>
+      <div id="qr-pay" style="text-align:center;padding:1.5rem 0;">
+        <div style="width:120px;height:120px;margin:0 auto;background:var(--orange-bg);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:2.5rem;">📱</div>
+        <p style="margin-top:1rem;font-size:.875rem;color:var(--grey);" data-i18n="qr_hint">Scan QR code with your app to complete payment</p>
+      </div>
+      <div id="card-pay" style="display:none;">
+        <div class="card-fields">
+          <div class="form-group">
+            <label data-i18n="lbl_cardholder">Cardholder Name</label>
+            <input type="text" data-i18n-placeholder="ph_cardholder" placeholder="Wei Chen" />
+          </div>
+          <div class="form-group">
+            <label data-i18n="lbl_cardnum">Card Number</label>
+            <input type="text" placeholder="1234 5678 9012 3456" maxlength="19"
+              oninput="this.value=this.value.replace(/[^\d]/g,'').replace(/(.{4})/g,'$1 ').trim()" />
+          </div>
+          <div class="card-row">
+            <div class="form-group">
+              <label data-i18n="lbl_expiry">Expiry</label>
+              <input type="text" placeholder="MM / YY" maxlength="7"
+                oninput="let v=this.value.replace(/\D/g,'');if(v.length>=3)v=v.slice(0,2)+' / '+v.slice(2);this.value=v;" />
+            </div>
+            <div class="form-group">
+              <label>CVV</label>
+              <input type="text" placeholder="123" maxlength="4" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="pay-btn" onclick="confirmPayment()" id="pay-btn-label" data-i18n="pay_btn">Pay ¥—</button>
+      <p class="secure-note" data-i18n="secure_note">🔒 Secured &amp; encrypted payment</p>
+    </div>
+    <div id="success-screen">
+      <div class="success-icon">✓</div>
+      <h3 style="font-size:1.4rem;font-weight:800;margin-bottom:.5rem;" data-i18n="success_title">Booking Confirmed!</h3>
+      <p style="color:var(--grey);font-size:.9rem;margin-bottom:1.5rem;" id="success-detail"></p>
+      <button class="btn-primary" data-i18n="done_btn" onclick="closePayment()">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer id="contact">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="nav-logo"><span>Ember</span> Sports</div>
+      <p data-i18n="footer_brand">Shanghai's premier pickleball facility. 8 professional courts, open daily from 7AM to 10PM.</p>
+    </div>
+    <div class="footer-col">
+      <h5 data-i18n="footer_col1_title">Venue</h5>
+      <ul>
+        <li data-i18n="footer_about">About Us</li>
+        <li data-i18n="footer_courts">Our Courts</li>
+        <li data-i18n="footer_pricing">Pricing</li>
+        <li data-i18n="footer_member">Membership</li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5 data-i18n="footer_col2_title">Contact</h5>
+      <ul>
+        <li>📍 Shanghai, China</li>
+        <li>📞 +86 21 0000 0000</li>
+        <li>✉️ hello@embersports.cn</li>
+        <li>WeChat: EmberSports</li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span data-i18n="footer_copy">© 2026 Ember Sports. All rights reserved.</span>
+    <span data-i18n="footer_legal">Privacy Policy · Terms of Service</span>
+  </div>
+</footer>
+
+<script>
+// ── Translations ──────────────────────────────
+const T = {
+  en: {
+    nav_about:'About', nav_courts:'Courts', nav_book:'Book', nav_contact:'Contact', nav_cta:'Book a Court',
+    hero_tag:"Shanghai's Premier Pickleball Venue",
+    hero_sub:'8 professional pickleball courts in the heart of Shanghai. Built for players who take their game seriously.',
+    hero_cta1:'Book a Court', hero_cta2:'Learn More',
+    stat1:'Pickleball Courts', stat2:'Opens Daily', stat3:'Closes Daily',
+    about_tag:'About Us', about_title:"Shanghai's home for pickleball",
+    about_sub:'Ember Sports is a dedicated pickleball facility committed to growing the sport in Shanghai — from beginners to competitive players.',
+    f1_title:'8 Professional Courts', f1_body:'Tournament-grade surfaces with professional nets and proper court markings — always in top condition.',
+    f2_title:'Full LED Lighting',      f2_body:'Play morning to night with stadium-quality lighting designed to reduce eye strain on court.',
+    f3_title:'All Skill Levels Welcome', f3_body:"Whether you're picking up a paddle for the first time or competing in leagues, Ember is your court.",
+    f4_title:'Central Shanghai Location', f4_body:'Conveniently located with easy metro access, parking on-site, and a welcoming lounge area.',
+    courts_tag:'Our Courts', courts_title:'8 courts, ready to play',
+    courts_sub:'All courts are tournament-grade. Check live availability in the booking section below.',
+    court_available:'Available', court_booked:'Fully Booked',
+    book_tag:'Reservations', book_title:'Book your court',
+    book_sub:'Pick a date and duration, then click any available slot in the grid to reserve it.',
+    ctrl_date:'Date', ctrl_dur:'Duration', ctrl_players:'Players',
+    dur1:'1 hour', dur2:'1.5 hours', dur3:'2 hours', dur4:'3 hours',
+    p2:'2 players', p3:'3 players', p4:'4 players',
+    leg_av:'Available', leg_bk:'Booked', leg_sel:'Your selection',
+    lbl_fname:'First Name', lbl_lname:'Last Name', lbl_email:'Email', lbl_phone:'Phone / WeChat',
+    ph_fname:'Wei', ph_lname:'Chen',
+    btn_pay:'Continue to Payment →',
+    sum_title:'Booking Summary', sum_hint:'Select a slot in the grid above',
+    sum_date:'Date', sum_court:'Court', sum_start:'Start Time', sum_dur:'Duration',
+    sum_players:'Players', sum_rate:'Rate', sum_total:'Total',
+    sum_cancel:'Free cancellation up to 24 hours before your booking. WeChat Pay, Alipay & card accepted.',
+    modal_title:'Complete Payment', pay_card:'Card',
+    qr_hint:'Scan QR code with your app to complete payment',
+    lbl_cardholder:'Cardholder Name', ph_cardholder:'Wei Chen',
+    lbl_cardnum:'Card Number', lbl_expiry:'Expiry',
+    pay_btn:'Pay ¥—', secure_note:'🔒 Secured & encrypted payment',
+    success_title:'Booking Confirmed!', done_btn:'Done',
+    footer_brand:"Shanghai's premier pickleball facility. 8 professional courts, open daily from 7AM to 10PM.",
+    footer_col1_title:'Venue', footer_about:'About Us', footer_courts:'Our Courts', footer_pricing:'Pricing', footer_member:'Membership',
+    footer_col2_title:'Contact',
+    footer_copy:'© 2026 Ember Sports. All rights reserved.', footer_legal:'Privacy Policy · Terms of Service',
+    alert_no_slot:'Please select a time slot from the availability grid first.',
+    alert_no_info:'Please fill in your name and email before continuing.',
+    time_col:'Time',
+  },
+  zh: {
+    nav_about:'关于我们', nav_courts:'球场', nav_book:'预约', nav_contact:'联系我们', nav_cta:'预约球场',
+    hero_tag:'上海顶级匹克球社交馆',
+    hero_sub:'上海市中心 8 片专业匹克球场。为认真对待运动的您打造。',
+    hero_cta1:'预约球场', hero_cta2:'了解更多',
+    stat1:'专业匹克球场', stat2:'每日开放', stat3:'每日闭馆',
+    about_tag:'关于我们', about_title:'上海匹克球的新主场',
+    about_sub:'合拍社致力于在上海推广匹克球运动——从初学者到竞技选手，这里都是您的主场。',
+    f1_title:'8 片专业球场', f1_body:'比赛级地面，配备专业球网和标准划线，始终保持最佳状态。',
+    f2_title:'全场 LED 照明', f2_body:'从清晨到深夜，体育场级照明设计有效减少眼部疲劳，全天候畅快打球。',
+    f3_title:'欢迎所有水平球手', f3_body:'无论您是第一次拿起球拍，还是参加联赛的竞技选手，合拍社都欢迎您。',
+    f4_title:'上海市中心位置', f4_body:'交通便利，地铁直达，提供场内停车位和舒适的休息区。',
+    courts_tag:'我们的球场', courts_title:'8 片球场，随时可用',
+    courts_sub:'所有球场均达到比赛标准。请在下方预约区查看实时空位。',
+    court_available:'空闲', court_booked:'已约满',
+    book_tag:'预约', book_title:'预约您的球场',
+    book_sub:'选择日期和时长，在下方空位表中点击任意空位即可完成预约。',
+    ctrl_date:'日期', ctrl_dur:'时长', ctrl_players:'人数',
+    dur1:'1 小时', dur2:'1.5 小时', dur3:'2 小时', dur4:'3 小时',
+    p2:'2 人', p3:'3 人', p4:'4 人',
+    leg_av:'空位', leg_bk:'已预约', leg_sel:'您的选择',
+    lbl_fname:'名', lbl_lname:'姓', lbl_email:'电子邮件', lbl_phone:'手机 / 微信',
+    ph_fname:'伟', ph_lname:'陈',
+    btn_pay:'前往支付 →',
+    sum_title:'预约详情', sum_hint:'请在上方表格中选择空位',
+    sum_date:'日期', sum_court:'球场', sum_start:'开始时间', sum_dur:'时长',
+    sum_players:'人数', sum_rate:'单价', sum_total:'合计',
+    sum_cancel:'预约前 24 小时可免费取消。支持微信支付、支付宝及银行卡。',
+    modal_title:'完成支付', pay_card:'银行卡',
+    qr_hint:'使用 App 扫描二维码完成支付',
+    lbl_cardholder:'持卡人姓名', ph_cardholder:'陈伟',
+    lbl_cardnum:'卡号', lbl_expiry:'有效期',
+    pay_btn:'支付 ¥—', secure_note:'🔒 安全加密支付',
+    success_title:'预约成功！', done_btn:'完成',
+    footer_brand:'上海顶级匹克球馆。8 片专业球场，每日 7AM–10PM 开放。',
+    footer_col1_title:'场馆', footer_about:'关于我们', footer_courts:'球场介绍', footer_pricing:'收费标准', footer_member:'会员服务',
+    footer_col2_title:'联系我们',
+    footer_copy:'© 2026 Ember Sports 合拍社。版权所有。', footer_legal:'隐私政策 · 服务条款',
+    alert_no_slot:'请先在空位表中选择时间段。',
+    alert_no_info:'请填写姓名和电子邮件后继续。',
+    time_col:'时间',
+  }
+};
+
+let lang = 'en';
+
+function setLang(l) {
+  lang = l;
+  // Toggle button styles
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent.trim() === (l === 'en' ? 'EN' : '中文'));
+  });
+  // Update all data-i18n elements
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (T[l][key] !== undefined) el.textContent = T[l][key];
+  });
+  // Update placeholders
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.dataset.i18nPlaceholder;
+    if (T[l][key] !== undefined) el.placeholder = T[l][key];
+  });
+  // Re-render dynamic content
+  renderCourtCards();
+  updateSummary();
+}
+
+// ── Data ──────────────────────────────────────
+const SLOTS = [];
+for (let h = 7; h <= 21; h++) {
+  SLOTS.push(`${String(h).padStart(2,'0')}:00`);
+  if (h < 22) SLOTS.push(`${String(h).padStart(2,'0')}:30`);
+}
+
+const BOOKED = {
+  0: new Set([2,3,4,5]),
+  1: new Set([12,13,14,15]),
+  2: new Set([16,17,18,19]),
+  3: new Set([2,3,4,5,6,7,8,9]),
+  4: new Set([22,23,24,25]),
+  5: new Set([8,9,10,11]),
+  6: new Set([14,15]),
+  7: new Set([18,19,20,21]),
+};
+
+let selectedCourt = null;
+let selectedSlotIdx = null;
+
+// ── Init ──────────────────────────────────────
+const dateInput = document.getElementById('bookDate');
+dateInput.value = new Date().toISOString().split('T')[0];
+dateInput.min   = dateInput.value;
+renderCourtCards();
+renderGrid();
+
+// ── Court Cards ───────────────────────────────
+function renderCourtCards() {
+  const grid = document.getElementById('courtGrid');
+  grid.innerHTML = '';
+  for (let i = 0; i < 8; i++) {
+    const avail = BOOKED[i].size < SLOTS.length;
+    const statusLabel = avail ? T[lang].court_available : T[lang].court_booked;
+    const statusClass = avail ? 'status-available' : 'status-busy';
+    grid.innerHTML += `
+      <div class="court-card">
+        <div class="court-num">${i+1}</div>
+        <div class="court-name">Court ${i+1}</div>
+        <div class="court-price">¥150 / hr</div>
+        <span class="court-status ${statusClass}">${statusLabel}</span>
+      </div>`;
+  }
+}
+
+// ── Grid ──────────────────────────────────────
+function renderGrid() {
+  clearSelection();
+  const head = document.getElementById('tableHead');
+  head.innerHTML = `<th>${T[lang].time_col}</th>`;
+  for (let c = 1; c <= 8; c++) head.innerHTML += `<th>Court ${c}</th>`;
+
+  const body = document.getElementById('tableBody');
+  body.innerHTML = '';
+  SLOTS.forEach((time, si) => {
+    const tr = document.createElement('tr');
+    const td0 = document.createElement('td');
+    td0.className = 'time-label';
+    td0.textContent = time;
+    tr.appendChild(td0);
+    for (let ci = 0; ci < 8; ci++) {
+      const td = document.createElement('td');
+      td.className = 'acell ' + (BOOKED[ci].has(si) ? 'bk' : 'av');
+      td.dataset.court = ci;
+      td.dataset.slot  = si;
+      if (!BOOKED[ci].has(si)) td.addEventListener('click', () => onCellClick(ci, si));
+      tr.appendChild(td);
+    }
+    body.appendChild(tr);
+  });
+}
+
+// ── Selection ─────────────────────────────────
+function getDurSlots() {
+  return Math.round(parseFloat(document.getElementById('duration').value) * 2);
+}
+
+function onCellClick(ci, si) {
+  const dur = getDurSlots();
+  for (let d = 0; d < dur; d++) {
+    if (si + d >= SLOTS.length || BOOKED[ci].has(si + d)) {
+      document.querySelectorAll(`.acell[data-court="${ci}"]`).forEach(cell => {
+        const s = parseInt(cell.dataset.slot);
+        if (s >= si && s < si + dur) {
+          cell.style.background = '#fff0ee';
+          setTimeout(() => { cell.style.background = ''; }, 600);
+        }
+      });
+      return;
+    }
+  }
+  clearSelection();
+  selectedCourt = ci;
+  selectedSlotIdx = si;
+  document.querySelectorAll('.acell').forEach(cell => {
+    const c = parseInt(cell.dataset.court), s = parseInt(cell.dataset.slot);
+    if (c !== ci) return;
+    if (s === si) cell.classList.add('sel');
+    else if (s > si && s < si + dur) cell.classList.add('sel-cont');
+  });
+  updateSummary();
+}
+
+function clearSelection() {
+  selectedCourt = null;
+  selectedSlotIdx = null;
+  document.querySelectorAll('.acell.sel, .acell.sel-cont').forEach(c => c.classList.remove('sel','sel-cont'));
+  updateSummary();
+}
+
+// ── Summary ───────────────────────────────────
+function updateSummary() {
+  const container = document.getElementById('summary-content');
+  if (selectedCourt === null) {
+    container.innerHTML = `<div class="no-selection-hint">${T[lang].sum_hint}</div>`;
+    document.getElementById('pay-btn-label').textContent = T[lang].pay_btn;
+    document.getElementById('modal-sub').textContent = '—';
+    return;
+  }
+  const date    = document.getElementById('bookDate').value;
+  const dur     = parseFloat(document.getElementById('duration').value);
+  const players = document.getElementById('players').value;
+  const time    = SLOTS[selectedSlotIdx];
+  const court   = selectedCourt + 1;
+  const total   = Math.round(150 * dur);
+  const t       = T[lang];
+
+  container.innerHTML = `
+    <div class="summary-row"><span class="label">${t.sum_date}</span><span class="val">${date}</span></div>
+    <div class="summary-row"><span class="label">${t.sum_court}</span><span class="val">Court ${court}</span></div>
+    <div class="summary-row"><span class="label">${t.sum_start}</span><span class="val">${time}</span></div>
+    <div class="summary-row"><span class="label">${t.sum_dur}</span><span class="val">${dur} hr${dur>1?'s':''}</span></div>
+    <div class="summary-row"><span class="label">${t.sum_players}</span><span class="val">${players}</span></div>
+    <div class="summary-row"><span class="label">${t.sum_rate}</span><span class="val">¥150 / hr</span></div>
+    <div class="summary-total"><span>${t.sum_total}</span><span class="val">¥${total}</span></div>
+    <p style="font-size:.75rem;color:var(--grey);margin-top:1rem;line-height:1.6;">${t.sum_cancel}</p>`;
+
+  document.getElementById('pay-btn-label').textContent = `${lang==='zh'?'支付':'Pay'} ¥${total}`;
+  document.getElementById('modal-sub').textContent = `Court ${court} · ${date} ${time} · ¥${total}`;
+}
+
+// ── Payment ───────────────────────────────────
+function openPayment() {
+  if (selectedCourt === null) { alert(T[lang].alert_no_slot); return; }
+  const fname = document.getElementById('fname').value.trim();
+  const email = document.getElementById('email').value.trim();
+  if (!fname || !email) { alert(T[lang].alert_no_info); return; }
+  document.getElementById('pay-form-screen').style.display = '';
+  document.getElementById('success-screen').classList.remove('show');
+  document.getElementById('payOverlay').classList.add('active');
+}
+
+function closePayment() {
+  document.getElementById('payOverlay').classList.remove('active');
+}
+
+function selectMethod(el, method) {
+  document.querySelectorAll('.pay-method').forEach(m => m.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('qr-pay').style.display   = method !== 'card' ? '' : 'none';
+  document.getElementById('card-pay').style.display = method === 'card' ? '' : 'none';
+}
+
+function confirmPayment() {
+  const dur   = parseFloat(document.getElementById('duration').value);
+  const date  = document.getElementById('bookDate').value;
+  const court = selectedCourt + 1;
+  const time  = SLOTS[selectedSlotIdx];
+  document.getElementById('pay-form-screen').style.display = 'none';
+  document.getElementById('success-detail').textContent =
+    lang === 'zh'
+      ? `${date} ${time}，${dur} 小时，Court ${court}。`
+      : `Court ${court} on ${date} at ${time} for ${dur} hr${dur>1?'s':''}.`;
+  document.getElementById('success-screen').classList.add('show');
+}
+
+document.getElementById('payOverlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('payOverlay')) closePayment();
+});
+</script>
+</body>
+</html>
