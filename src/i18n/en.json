@@ -1,0 +1,74 @@
+{
+  "brand": "Ember Sports",
+  "nav": {
+    "home": "Home",
+    "booking": "Book a Court",
+    "myBookings": "My Bookings",
+    "login": "Sign In",
+    "logout": "Sign Out"
+  },
+  "home": {
+    "hero": {
+      "title": "Ember Sports",
+      "subtitle": "Pickleball",
+      "description": "Professional pickleball court management, delivering a premium sports experience",
+      "cta": "Book Now"
+    },
+    "feature": {
+      "venue": {
+        "title": "Premium Courts",
+        "desc": "8 professional pickleball courts with professional lighting and facilities"
+      },
+      "booking": {
+        "title": "Flexible Booking",
+        "desc": "Book by the hour and check court availability anytime"
+      },
+      "payment": {
+        "title": "Secure Payment",
+        "desc": "Pay online and your court is locked immediately after confirmation"
+      }
+    },
+    "pricing": {
+      "title": "Court Pricing",
+      "subtitle": "Transparent pricing, choose what suits you",
+      "standard": "Standard Court",
+      "vip": "VIP Court",
+      "training": "Training Court"
+    }
+  },
+  "booking": {
+    "title": "Book a Court",
+    "court": "Court",
+    "available": "Available",
+    "booked": "Booked",
+    "confirm": "Confirm Booking",
+    "name": "Your Name",
+    "phone": "Phone Number",
+    "total": "Total"
+  },
+  "myBookings": {
+    "title": "My Bookings",
+    "empty": "No bookings yet",
+    "cancel": "Cancel",
+    "status": {
+      "paid": "Paid",
+      "pending": "Pending Payment",
+      "cancelled": "Cancelled"
+    }
+  },
+  "login": {
+    "welcome": "Welcome Back",
+    "create": "Create Account",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Sign In",
+    "register": "Sign Up",
+    "noAccount": "Don't have an account? Sign up",
+    "hasAccount": "Already have an account? Sign in"
+  },
+  "common": {
+    "hour": "hour",
+    "loading": "Loading...",
+    "close": "Close"
+  }
+}

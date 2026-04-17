@@ -1,0 +1,101 @@
+{
+  "brand": {
+    "name": "Ember Sports",
+    "subtitle": "匹克球"
+  },
+  "nav": {
+    "home": "首页",
+    "booking": "预订场地",
+    "myBookings": "我的预订",
+    "login": "登录",
+    "logout": "退出"
+  },
+  "home": {
+    "hero": {
+      "title": "Ember Sports 匹克球",
+      "subtitle": "专业匹克球场馆运营，为您提供优质的运动体验",
+      "cta": "立即预订"
+    },
+    "features": {
+      "quality": {
+        "title": "优质场地",
+        "desc": "8个专业匹克球场地，配备专业灯光和设施"
+      },
+      "flexible": {
+        "title": "灵活预订",
+        "desc": "支持按小时预订，随时查看场地空闲情况"
+      },
+      "secure": {
+        "title": "安全支付",
+        "desc": "在线支付，预订确认后立即锁定场地"
+      }
+    },
+    "pricing": {
+      "title": "场地价格",
+      "subtitle": "透明定价，按需选择",
+      "standard": {
+        "name": "标准场地",
+        "desc": "A-D场"
+      },
+      "vip": {
+        "name": "VIP场地",
+        "desc": "E-F场，配备空调"
+      },
+      "training": {
+        "name": "训练场地",
+        "desc": "G-H场，适合初学者"
+      },
+      "perHour": "/小时"
+    }
+  },
+  "booking": {
+    "title": "场地预订",
+    "court": "场地",
+    "price": "价格",
+    "available": "空闲",
+    "booked": "已订",
+    "confirm": {
+      "title": "确认预订",
+      "date": "日期",
+      "time": "时间",
+      "total": "总计",
+      "name": "您的姓名",
+      "phone": "联系电话",
+      "submit": "确认预订"
+    }
+  },
+  "myBookings": {
+    "title": "我的预订",
+    "empty": "暂无预订记录",
+    "status": {
+      "pending": "待支付",
+      "paid": "已支付",
+      "cancelled": "已取消"
+    },
+    "cancel": "取消"
+  },
+  "login": {
+    "welcome": "欢迎回来",
+    "create": "创建账户",
+    "subtitle": {
+      "login": "登录以管理您的预订",
+      "register": "注册以开始预订场地"
+    },
+    "email": "邮箱",
+    "password": "密码",
+    "submit": {
+      "login": "登录",
+      "register": "注册"
+    },
+    "switch": {
+      "toRegister": "没有账户？立即注册",
+      "toLogin": "已有账户？立即登录"
+    },
+    "success": "注册成功，请登录"
+  },
+  "common": {
+    "loading": "加载中...",
+    "error": "错误",
+    "close": "关闭"
+  }
+}
