@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { I18nextProvider } from 'react-i18next';
 import { User } from '@supabase/supabase-js';
 import i18n from './i18n';
@@ -49,16 +49,14 @@ function App() {
       <HashRouter>
         <div className="min-h-screen bg-gray-50">
           <Header user={user} />
-          <AnimatePresence mode="wait">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/auth/callback" element={<AuthCallback />} />
-              <Route path="/onboarding" element={user ? <Onboarding /> : <Navigate to="/login" />} />
-              <Route path="/booking" element={<Booking user={user} />} />
-              <Route path="/my-bookings" element={user ? <MyBookings user={user} /> : <Navigate to="/login" />} />
-              <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
-            </Routes>
-          </AnimatePresence>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/auth/callback" element={<AuthCallback />} />
+            <Route path="/onboarding" element={user ? <Onboarding /> : <Navigate to="/login" />} />
+            <Route path="/booking" element={<Booking user={user} />} />
+            <Route path="/my-bookings" element={user ? <MyBookings user={user} /> : <Navigate to="/login" />} />
+            <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
+          </Routes>
         </div>
       </HashRouter>
     </I18nextProvider>
