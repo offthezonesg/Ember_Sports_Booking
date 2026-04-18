@@ -1,56 +1,494 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>合拍社匹克球场馆预订</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    /* 内联样式确保主题色立即生效，避免闪烁 */
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-    }
-    html.light, html.light body {
-      background-color: #ffffff !important;
-      color: #000000;
-    }
-    html.dark, html.dark body {
-      background-color: #1a1a1a !important;
-      color: #ffffff;
-    }
-  </style>
-  <script>
-    // 在 React 加载前立即设置主题，避免闪烁
-    (function() {
-      const isInIframe = window.self !== window.top;
-
-      function applyThemeToDOM(theme) {
-        document.documentElement.classList.remove('light', 'dark');
-        document.documentElement.classList.add(theme);
-        document.documentElement.setAttribute('data-theme', theme);
-      }
-
-      if (isInIframe) {
-        // 监听父窗口主动推送的主题消息
-        window.addEventListener('message', function(event) {
-          if (event.data && typeof event.data.theme === 'string') {
-            const theme = event.data.theme;
-            if (theme === 'light' || theme === 'dark') {
-              applyThemeToDOM(theme);
-            }
-          }
-        });
-      } else {
-        // 非 iframe 环境，使用默认 light 主题
-        applyThemeToDOM('light');
-      }
-    })();
-  </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ember Sports - Shanghai's Premier Pickleball Venue</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;900&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Barlow', sans-serif; }
+        .modal-overlay { display: none; }
+        .modal-overlay.active { display: flex; }
+    </style>
 </head>
-<body>
-  <div id="root"></div>
+<body class="bg-white text-[#111]">
+
+<!-- Navigation -->
+<nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-[#eee]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+        <div class="text-xl font-black tracking-tight" style="font-family:'Barlow Condensed',sans-serif;"><span class="text-[#F4611A]">Ember</span> Sports</div>
+        <div class="flex items-center gap-4 sm:gap-6">
+            <a href="#booking" class="text-sm font-semibold text-[#111] hover:text-[#F4611A] transition-colors">Book</a>
+            <button id="myBookingsBtn" class="text-sm font-semibold text-[#111] hover:text-[#F4611A] transition-colors hidden">My Bookings</button>
+            <button id="authBtn" onclick="handleAuthClick()" class="bg-[#F4611A] text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-[#FF8C42] transition-colors">Log In</button>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section id="hero" class="min-h-screen flex flex-col justify-center items-start px-4 sm:px-6 lg:px-8 py-32 bg-[#FFF4EE] relative overflow-hidden">
+    <div class="absolute right-[-10%] top-1/2 -translate-y-1/2 w-[520px] h-[520px] rounded-full bg-[#F4611A] opacity-[0.07] pointer-events-none"></div>
+    <div class="max-w-7xl mx-auto w-full relative z-10">
+        <span class="inline-block bg-[#F4611A] text-white text-xs font-bold tracking-widest uppercase px-4 py-1 rounded-full mb-6">
+            Shanghai's Premier Pickleball Venue
+        </span>
+        <h1 class="text-5xl sm:text-7xl lg:text-8xl font-black leading-tight tracking-tighter max-w-4xl mb-6" style="font-family:'Barlow Condensed',sans-serif;">
+            Play Hard.<br><em class="text-[#F4611A] not-italic">Play Ember.</em>
+        </h1>
+        <p class="text-lg text-[#555] max-w-xl mb-10 leading-relaxed">
+            上海市中心 8 片专业匹克球场。为认真对待运动的您打造。
+        </p>
+        <div class="flex gap-4 flex-wrap mb-16">
+            <a href="#booking" class="bg-[#F4611A] text-white px-8 py-3.5 rounded-full font-bold text-lg hover:bg-[#FF8C42] transition-all hover:-translate-y-0.5 shadow-lg shadow-orange-500/20">Book a Court</a>
+            <a href="#about" class="bg-transparent text-[#111] px-8 py-3.5 rounded-full font-semibold text-lg border-2 border-[#ddd] hover:border-[#F4611A] transition-all hover:-translate-y-0.5">Learn More</a>
+        </div>
+        <div class="flex gap-12 sm:gap-20">
+            <div><div class="text-4xl font-black text-[#F4611A]">8</div><div class="text-sm text-[#555] font-medium mt-1">Pickleball Courts</div></div>
+            <div><div class="text-4xl font-black text-[#F4611A]">7AM</div><div class="text-sm text-[#555] font-medium mt-1">Opens Daily</div></div>
+            <div><div class="text-4xl font-black text-[#F4611A]">10PM</div><div class="text-sm text-[#555] font-medium mt-1">Closes Daily</div></div>
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section id="about" class="py-24 px-4 sm:px-6 lg:px-8 bg-white">
+    <div class="max-w-7xl mx-auto">
+        <span class="inline-block bg-[#FFF4EE] text-[#F4611A] text-xs font-bold tracking-widest uppercase px-4 py-1 rounded-full mb-4">About Us</span>
+        <h2 class="text-4xl md:text-5xl font-extrabold tracking-tight max-w-2xl mb-4">Shanghai's home for pickleball</h2>
+        <p class="text-[#555] max-w-xl text-lg">合拍社致力于在上海推广匹克球运动——从初学者到竞技选手，这里都是您的主场。</p>
+        <div class="grid md:grid-cols-2 gap-16 mt-16 items-center">
+            <div class="space-y-6">
+                <div class="flex gap-4 items-start">
+                    <div class="w-11 h-11 bg-[#FFF4EE] rounded-xl flex items-center justify-center text-2xl flex-shrink-0">🏓</div>
+                    <div><h4 class="font-bold text-base mb-1">8 Professional Courts</h4><p class="text-sm text-[#555] leading-relaxed">比赛级地面，配备专业球网和标准划线，始终保持最佳状态。</p></div>
+                </div>
+                <div class="flex gap-4 items-start">
+                    <div class="w-11 h-11 bg-[#FFF4EE] rounded-xl flex items-center justify-center text-2xl flex-shrink-0">💡</div>
+                    <div><h4 class="font-bold text-base mb-1">Full LED Lighting</h4><p class="text-sm text-[#555] leading-relaxed">从清晨到深夜，体育场级照明设计有效减少眼部疲劳。</p></div>
+                </div>
+                <div class="flex gap-4 items-start">
+                    <div class="w-11 h-11 bg-[#FFF4EE] rounded-xl flex items-center justify-center text-2xl flex-shrink-0">🎯</div>
+                    <div><h4 class="font-bold text-base mb-1">All Skill Levels Welcome</h4><p class="text-sm text-[#555] leading-relaxed">无论您是第一次拿起球拍，还是参加联赛的竞技选手，合拍社都欢迎您。</p></div>
+                </div>
+                <div class="flex gap-4 items-start">
+                    <div class="w-11 h-11 bg-[#FFF4EE] rounded-xl flex items-center justify-center text-2xl flex-shrink-0">📍</div>
+                    <div><h4 class="font-bold text-base mb-1">Central Shanghai Location</h4><p class="text-sm text-[#555] leading-relaxed">交通便利，地铁直达，提供 onsite 停车位和舒适的休息区。</p></div>
+                </div>
+            </div>
+            <div class="bg-[#FFF4EE] rounded-3xl h-[400px] flex items-center justify-center p-8">
+                <div class="grid grid-cols-4 grid-rows-2 gap-3 w-full h-full">
+                    <div class="bg-[#F4611A]/70 rounded-xl flex items-center justify-center text-white font-bold text-sm">A</div>
+                    <div class="bg-[#F4611A]/70 rounded-xl flex items-center justify-center text-white font-bold text-sm">B</div>
+                    <div class="bg-[#F4611A]/70 rounded-xl flex items-center justify-center text-white font-bold text-sm">C</div>
+                    <div class="bg-[#F4611A]/70 rounded-xl flex items-center justify-center text-white font-bold text-sm">D</div>
+                    <div class="bg-[#F4611A]/70 rounded-xl flex items-center justify-center text-white font-bold text-sm">E</div>
+                    <div class="bg-[#F4611A]/70 rounded-xl flex items-center justify-center text-white font-bold text-sm">F</div>
+                    <div class="bg-[#F4611A]/70 rounded-xl flex items-center justify-center text-white font-bold text-sm">G</div>
+                    <div class="bg-[#F4611A]/70 rounded-xl flex items-center justify-center text-white font-bold text-sm">H</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Booking Section -->
+<section id="booking" class="py-24 px-4 sm:px-6 lg:px-8 bg-[#FFF4EE]">
+    <div class="max-w-7xl mx-auto">
+        <span class="inline-block bg-[#F4611A]/10 text-[#F4611A] text-xs font-bold px-3 py-1 rounded-full mb-2 uppercase tracking-wider">Reservations</span>
+        <h2 class="text-3xl sm:text-4xl font-black tracking-tight mb-2">Book your court</h2>
+        <p class="text-slate-500 text-sm sm:text-base mb-8">Pick a date, then click any available slot to reserve it.</p>
+        <div class="flex gap-2 mb-6 overflow-x-auto pb-2" id="datePicker"></div>
+        <div class="flex gap-4 mb-4 text-xs text-slate-500">
+            <span class="flex items-center gap-1.5"><span class="w-3 h-3 bg-white border border-slate-200 rounded inline-block"></span> Available</span>
+            <span class="flex items-center gap-1.5"><span class="w-3 h-3 bg-slate-200 rounded inline-block"></span> Booked</span>
+        </div>
+        <div class="bg-white rounded-2xl p-4 sm:p-6 border border-slate-100 shadow-sm">
+            <div id="bookingLoading" class="flex items-center justify-center py-16 text-slate-400">
+                <svg class="animate-spin w-6 h-6 mr-2 text-[#F4611A]" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg>
+                Loading courts...
+            </div>
+            <div id="bookingGrid" class="hidden overflow-x-auto"></div>
+        </div>
+    </div>
+</section>
+
+<!-- My Bookings Section -->
+<section id="myBookingsSection" class="py-24 px-4 sm:px-6 lg:px-8 bg-white hidden">
+    <div class="max-w-4xl mx-auto">
+        <h2 class="text-3xl font-black tracking-tight mb-8">My Bookings</h2>
+        <div id="myBookingsList"></div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-[#111] text-[#aaa] py-16 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto grid md:grid-cols-3 gap-12 mb-12">
+        <div>
+            <div class="text-2xl font-black text-white tracking-tight" style="font-family:'Barlow Condensed',sans-serif;"><span class="text-[#F4611A]">Ember</span> Sports</div>
+            <p class="text-sm mt-3 leading-relaxed max-w-xs">Shanghai's premier pickleball facility. 8 professional courts, open daily from 7AM to 10PM.</p>
+        </div>
+        <div>
+            <h5 class="text-white text-xs font-bold uppercase tracking-wider mb-4">Contact</h5>
+            <ul class="space-y-2 text-sm">
+                <li>📍 Shanghai, China</li>
+                <li>📞 +86 21 0000 0000</li>
+                <li>✉️ hello@embersports.cn</li>
+            </ul>
+        </div>
+        <div>
+            <h5 class="text-white text-xs font-bold uppercase tracking-wider mb-4">Follow Us</h5>
+            <div class="flex gap-3">
+                <a href="#" class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-[#F4611A] transition-colors text-sm font-bold">IG</a>
+                <a href="#" class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-[#F4611A] transition-colors text-sm font-bold">WC</a>
+            </div>
+        </div>
+    </div>
+    <div class="border-t border-[#222] pt-6 flex flex-col md:flex-row justify-between text-xs">
+        <span>© 2026 Ember Sports. All rights reserved.</span>
+        <span>Privacy Policy · Terms of Service</span>
+    </div>
+</footer>
+
+<!-- Booking Modal -->
+<div id="bookingModal" class="modal-overlay fixed inset-0 bg-black/50 items-center justify-center z-50 p-4" onclick="closeBookingModal()">
+    <div class="bg-white rounded-2xl p-6 w-full max-w-md" onclick="event.stopPropagation()">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-bold">Confirm Booking</h2>
+            <button onclick="closeBookingModal()" class="p-2 hover:bg-slate-100 rounded-lg text-slate-400 text-2xl leading-none">&times;</button>
+        </div>
+        <div id="bookingDetails" class="space-y-3 mb-6"></div>
+        <div id="guestFields" class="space-y-3 mb-6 hidden">
+            <p class="text-sm text-slate-500">No account? Enter your details below to book as a guest.</p>
+            <input type="text" id="guestName" placeholder="Your Name" class="w-full px-4 py-3 rounded-lg border border-slate-200 focus:border-[#F4611A] focus:ring-2 focus:ring-[#F4611A]/20 outline-none" />
+            <input type="tel" id="guestPhone" placeholder="Phone Number" class="w-full px-4 py-3 rounded-lg border border-slate-200 focus:border-[#F4611A] focus:ring-2 focus:ring-[#F4611A]/20 outline-none" />
+        </div>
+        <div id="bookingTotal" class="flex items-center justify-between mb-6 p-4 bg-slate-50 rounded-xl"></div>
+        <div id="bookingError" class="hidden mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-lg"></div>
+        <button onclick="confirmBooking()" class="w-full py-3.5 bg-[#F4611A] text-white font-bold rounded-xl hover:bg-[#FF8C42] transition-colors text-base">Confirm Reservation</button>
+    </div>
+</div>
+
+<!-- Login Modal -->
+<div id="loginModal" class="modal-overlay fixed inset-0 bg-black/50 items-center justify-center z-50 p-4" onclick="closeLoginModal()">
+    <div class="bg-white rounded-2xl p-8 w-full max-w-md" onclick="event.stopPropagation()">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-bold" id="loginModalTitle">Log In</h2>
+            <button onclick="closeLoginModal()" class="p-2 hover:bg-slate-100 rounded-lg text-slate-400 text-2xl leading-none">&times;</button>
+        </div>
+        <div id="loginError" class="hidden mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-lg"></div>
+        <div id="loginSuccess" class="hidden mb-4 p-3 bg-green-50 text-green-700 text-sm rounded-lg"></div>
+        <form onsubmit="handleLogin(event)" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1">Email</label>
+                <input type="email" id="loginEmail" placeholder="your@email.com" required class="w-full px-4 py-3 rounded-lg border border-slate-200 focus:border-[#F4611A] focus:ring-2 focus:ring-[#F4611A]/20 outline-none" />
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1">Password</label>
+                <input type="password" id="loginPassword" placeholder="••••••••" required class="w-full px-4 py-3 rounded-lg border border-slate-200 focus:border-[#F4611A] focus:ring-2 focus:ring-[#F4611A]/20 outline-none" />
+            </div>
+            <button type="submit" id="loginSubmitBtn" class="w-full py-3 bg-[#F4611A] text-white font-bold rounded-lg hover:bg-[#FF8C42] transition-colors">Log In</button>
+        </form>
+        <div class="mt-4 text-center">
+            <button onclick="toggleAuthMode()" class="text-sm text-[#F4611A] hover:underline" id="toggleAuthBtn">Don't have an account? Register</button>
+        </div>
+    </div>
+</div>
+
+<script>
+const { createClient } = supabase;
+const sb = createClient(
+  'https://sjrinqsekowhgtikhnvv.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNqcmlucXNla293aGd0aWtobnZ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzODY5NTMsImV4cCI6MjA5MTk2Mjk1M30.qeGOQF6G3YOs_LSiSFBC0cGNWU_pVYWrJ50YDciDGj8'
+);
+
+let currentUser = null;
+let courts = [];
+let bookings = [];
+let selectedDate = new Date();
+let selectedSlot = null;
+let authMode = 'login';
+
+const timeSlots = ['08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00','21:00','22:00'];
+
+async function init() {
+  const { data: { session } } = await sb.auth.getSession();
+  currentUser = session?.user || null;
+  updateAuthUI();
+  buildDatePicker();
+  await loadCourts();
+  await loadBookings();
+}
+
+sb.auth.onAuthStateChange((event, session) => {
+  currentUser = session?.user || null;
+  updateAuthUI();
+  if (currentUser) loadMyBookings();
+});
+
+function updateAuthUI() {
+  const btn = document.getElementById('authBtn');
+  const myBtn = document.getElementById('myBookingsBtn');
+  const mySection = document.getElementById('myBookingsSection');
+  if (currentUser) {
+    btn.textContent = 'Log Out';
+    myBtn.classList.remove('hidden');
+    mySection.classList.remove('hidden');
+    loadMyBookings();
+  } else {
+    btn.textContent = 'Log In';
+    myBtn.classList.add('hidden');
+    mySection.classList.add('hidden');
+  }
+}
+
+function handleAuthClick() {
+  if (currentUser) { sb.auth.signOut(); } else { openLoginModal(); }
+}
+
+document.getElementById('myBookingsBtn').addEventListener('click', () => {
+  document.getElementById('myBookingsSection').scrollIntoView({ behavior: 'smooth' });
+});
+
+function buildDatePicker() {
+  const container = document.getElementById('datePicker');
+  container.innerHTML = '';
+  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date();
+    d.setDate(d.getDate() + i);
+    const isSelected = d.toDateString() === selectedDate.toDateString();
+    const btn = document.createElement('button');
+    btn.className = `flex-shrink-0 flex flex-col items-center px-4 py-3 rounded-xl font-semibold transition-all border ${isSelected ? 'bg-[#F4611A] text-white border-[#F4611A]' : 'bg-white text-[#111] border-slate-200 hover:border-[#F4611A]'}`;
+    btn.innerHTML = `<span class="text-xs mb-1">${days[d.getDay()]}</span><span class="text-lg">${d.getDate()}</span>`;
+    const captured = new Date(d);
+    btn.onclick = () => { selectedDate = captured; buildDatePicker(); loadBookings(); };
+    container.appendChild(btn);
+  }
+}
+
+async function loadCourts() {
+  const { data } = await sb.from('courts').select('*').eq('is_active', true).order('name');
+  if (data) courts = data;
+}
+
+async function loadBookings() {
+  document.getElementById('bookingLoading').classList.remove('hidden');
+  document.getElementById('bookingGrid').classList.add('hidden');
+  const dateStr = fmtDate(selectedDate);
+  const { data } = await sb.from('bookings').select('*').eq('booking_date', dateStr).in('status', ['confirmed','pending']);
+  bookings = data || [];
+  renderGrid();
+}
+
+function isBooked(courtId, time) {
+  const t = time + ':00';
+  return bookings.some(b => b.court_id === courtId && b.start_time <= t && b.end_time > t);
+}
+
+function renderGrid() {
+  document.getElementById('bookingLoading').classList.add('hidden');
+  const grid = document.getElementById('bookingGrid');
+  grid.classList.remove('hidden');
+  let html = `<table class="w-full min-w-[1000px] border-collapse text-sm"><thead><tr>
+    <th class="p-3 text-left text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 bg-white sticky left-0 z-10 min-w-[120px]">Court</th>`;
+  for (const t of timeSlots) {
+    html += `<th class="p-3 text-center text-xs font-bold text-slate-400 border-b border-slate-100 whitespace-nowrap">${t}</th>`;
+  }
+  html += `</tr></thead><tbody>`;
+  for (const court of courts) {
+    html += `<tr class="hover:bg-slate-50/30 transition-colors">
+      <td class="p-3 border-b border-r border-slate-100 sticky left-0 bg-white z-10">
+        <div class="font-semibold text-[#111] text-sm">${court.name}</div>
+        <div class="text-xs text-[#F4611A] font-medium">¥${court.price_per_hour}/hr</div>
+      </td>`;
+    for (const time of timeSlots) {
+      const booked = isBooked(court.id, time);
+      if (booked) {
+        html += `<td class="border border-slate-100"><div class="h-12 bg-slate-100 flex items-center justify-center text-xs text-slate-400">Booked</div></td>`;
+      } else {
+        html += `<td class="border border-slate-100 cursor-pointer hover:bg-[#FFF4EE] transition-colors" onclick="handleSlotClick('${court.id}','${time}')"><div class="h-12 flex items-center justify-center text-xs text-[#F4611A] font-semibold">Open</div></td>`;
+      }
+    }
+    html += `</tr>`;
+  }
+  html += `</tbody></table>`;
+  grid.innerHTML = html;
+}
+
+function handleSlotClick(courtId, time) {
+  const court = courts.find(c => c.id === courtId);
+  if (!court) return;
+  selectedSlot = { court, time };
+  openBookingModal();
+}
+
+function openBookingModal() {
+  const { court, time } = selectedSlot;
+  const endH = (parseInt(time.split(':')[0]) + 1).toString().padStart(2, '0');
+  document.getElementById('bookingDetails').innerHTML = `
+    <div class="p-4 bg-slate-50 rounded-xl flex items-start gap-3">
+      <span class="text-xl">🏓</span>
+      <div><div class="font-semibold text-[#111]">${court.name}</div><div class="text-sm text-slate-400">${court.description || ''}</div></div>
+    </div>
+    <div class="p-4 bg-slate-50 rounded-xl flex items-start gap-3">
+      <span class="text-xl">📅</span>
+      <div><div class="font-semibold text-[#111]">${fmtDateDisplay(selectedDate)}</div><div class="text-sm text-slate-400">${time} – ${endH}:00</div></div>
+    </div>`;
+  document.getElementById('bookingTotal').innerHTML = `<span class="text-slate-600 font-medium">Total (1 hour)</span><span class="text-2xl font-black text-[#F4611A]">¥${court.price_per_hour}</span>`;
+  document.getElementById('guestFields').classList.toggle('hidden', !!currentUser);
+  document.getElementById('bookingError').classList.add('hidden');
+  document.getElementById('guestName').value = '';
+  document.getElementById('guestPhone').value = '';
+  document.getElementById('bookingModal').classList.add('active');
+}
+
+function closeBookingModal() {
+  document.getElementById('bookingModal').classList.remove('active');
+  selectedSlot = null;
+}
+
+async function confirmBooking() {
+  if (!selectedSlot) return;
+  const { court, time } = selectedSlot;
+  const endH = (parseInt(time.split(':')[0]) + 1).toString().padStart(2, '0');
+  const guestName = document.getElementById('guestName').value.trim();
+  const guestPhone = document.getElementById('guestPhone').value.trim();
+  if (!currentUser && (!guestName || !guestPhone)) {
+    showBookingError('Please enter your name and phone number.');
+    return;
+  }
+  const btn = document.querySelector('#bookingModal button[onclick="confirmBooking()"]');
+  btn.textContent = 'Booking...';
+  btn.disabled = true;
+  const { error } = await sb.from('bookings').insert({
+    court_id: court.id,
+    booking_date: fmtDate(selectedDate),
+    start_time: time + ':00',
+    end_time: endH + ':00:00',
+    user_id: currentUser?.id || null,
+    guest_name: guestName || null,
+    guest_phone: guestPhone || null,
+    total_amount: court.price_per_hour,
+    status: 'pending'
+  });
+  btn.textContent = 'Confirm Reservation';
+  btn.disabled = false;
+  if (error) {
+    showBookingError('Booking failed. Please try again.');
+  } else {
+    closeBookingModal();
+    await loadBookings();
+    if (currentUser) loadMyBookings();
+    alert(`Booked! ${court.name} on ${fmtDateDisplay(selectedDate)} at ${time}.`);
+  }
+}
+
+function showBookingError(msg) {
+  const el = document.getElementById('bookingError');
+  el.textContent = msg;
+  el.classList.remove('hidden');
+}
+
+async function loadMyBookings() {
+  if (!currentUser) return;
+  const { data } = await sb.from('bookings').select('*, court:courts(name, description)').eq('user_id', currentUser.id).order('booking_date', { ascending: false });
+  const list = document.getElementById('myBookingsList');
+  if (!data || data.length === 0) {
+    list.innerHTML = `<div class="text-center py-16 bg-slate-50 rounded-2xl text-slate-400 text-sm">No bookings yet. <a href="#booking" class="text-[#F4611A] hover:underline">Book a court</a></div>`;
+    return;
+  }
+  list.innerHTML = data.map(b => {
+    const isCancelled = b.status === 'cancelled';
+    const isPaid = b.payment_status === 'paid';
+    const statusCls = isCancelled ? 'bg-slate-100 text-slate-500' : isPaid ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-600';
+    const statusText = isCancelled ? 'Cancelled' : isPaid ? 'Paid' : 'Pending';
+    return `<div class="bg-white border border-slate-100 rounded-xl p-5 mb-3 shadow-sm">
+      <div class="flex items-center justify-between mb-2">
+        <span class="font-bold text-[#111]">${b.court?.name || 'Court'}</span>
+        <span class="px-2.5 py-1 text-xs font-semibold rounded-full ${statusCls}">${statusText}</span>
+      </div>
+      <div class="text-sm text-slate-400 mb-3">${b.booking_date} &nbsp;·&nbsp; ${b.start_time?.slice(0,5)} – ${b.end_time?.slice(0,5)}</div>
+      <div class="flex items-center justify-between border-t border-slate-100 pt-3">
+        <span class="font-bold text-[#F4611A]">¥${b.total_amount}</span>
+        ${!isCancelled && b.status !== 'completed' ? `<button onclick="cancelBooking('${b.id}')" class="text-sm text-red-400 hover:text-red-600 transition-colors">Cancel</button>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function cancelBooking(id) {
+  if (!confirm('Cancel this booking?')) return;
+  await sb.from('bookings').update({ status: 'cancelled' }).eq('id', id);
+  loadMyBookings();
+  loadBookings();
+}
+
+function openLoginModal() {
+  document.getElementById('loginModal').classList.add('active');
+  document.getElementById('loginError').classList.add('hidden');
+  document.getElementById('loginSuccess').classList.add('hidden');
+  document.getElementById('loginEmail').value = '';
+  document.getElementById('loginPassword').value = '';
+}
+
+function closeLoginModal() {
+  document.getElementById('loginModal').classList.remove('active');
+}
+
+function toggleAuthMode() {
+  authMode = authMode === 'login' ? 'register' : 'login';
+  const isLogin = authMode === 'login';
+  document.getElementById('loginModalTitle').textContent = isLogin ? 'Log In' : 'Create Account';
+  document.getElementById('loginSubmitBtn').textContent = isLogin ? 'Log In' : 'Register';
+  document.getElementById('toggleAuthBtn').textContent = isLogin ? "Don't have an account? Register" : 'Already have an account? Log In';
+  document.getElementById('loginError').classList.add('hidden');
+  document.getElementById('loginSuccess').classList.add('hidden');
+}
+
+async function handleLogin(e) {
+  e.preventDefault();
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
+  const btn = document.getElementById('loginSubmitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Please wait...';
+  document.getElementById('loginError').classList.add('hidden');
+  document.getElementById('loginSuccess').classList.add('hidden');
+  let error;
+  if (authMode === 'login') {
+    ({ error } = await sb.auth.signInWithPassword({ email, password }));
+    if (!error) closeLoginModal();
+  } else {
+    ({ error } = await sb.auth.signUp({ email, password }));
+    if (!error) {
+      const s = document.getElementById('loginSuccess');
+      s.textContent = 'Registered! Check your email to confirm, then log in.';
+      s.classList.remove('hidden');
+      authMode = 'login';
+      document.getElementById('loginModalTitle').textContent = 'Log In';
+      document.getElementById('loginSubmitBtn').textContent = 'Log In';
+      document.getElementById('toggleAuthBtn').textContent = "Don't have an account? Register";
+    }
+  }
+  if (error) {
+    const el = document.getElementById('loginError');
+    el.textContent = error.message;
+    el.classList.remove('hidden');
+  }
+  btn.disabled = false;
+  btn.textContent = authMode === 'login' ? 'Log In' : 'Register';
+}
+
+function fmtDate(d) {
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+function fmtDateDisplay(d) {
+  return d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric', year:'numeric' });
+}
+
+init();
+</script>
 </body>
 </html>
