@@ -51,6 +51,7 @@ const MyBookings: React.FC<MyBookingsProps> = ({ user }) => {
   const getStatus = (status: string, payment: string) => {
     if (status === 'cancelled') return { text: t('myBookings.status.cancelled'), color: 'bg-gray-100 text-gray-600' };
     if (payment === 'paid') return { text: t('myBookings.status.paid'), color: 'bg-green-100 text-green-700' };
+    if (payment === 'mock_paid') return { text: t('myBookings.status.mockPaid'), color: 'bg-amber-100 text-amber-700' };
     return { text: t('myBookings.status.pending'), color: 'bg-orange-100 text-orange-600' };
   };
 

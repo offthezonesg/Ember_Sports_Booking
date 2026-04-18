@@ -44,12 +44,30 @@ const resources = {
         court: 'Court',
         available: 'Available',
         booked: 'Booked',
+        confirmTitle: 'Confirm Booking',
         confirm: 'Confirm Booking',
         total: 'Total',
         name: 'Your Name',
         phone: 'Phone Number',
+        email: 'Email (optional)',
         success: 'Booking confirmed!',
-        error: 'Booking failed. Please try again.'
+        error: 'Booking failed. Please try again.',
+        proceedToPay: 'Proceed to Payment',
+        processing: 'Processing...',
+        payment: {
+          title: 'Payment',
+          confirmPay: 'Confirm Payment'
+        },
+        testMode: {
+          banner: 'Test Mode - Payments Simulated',
+          paymentBanner: 'Test Mode: No real payment will be charged',
+          confirmPay: 'Confirm Payment (Test Mode)',
+          success: 'Booking confirmed! (Test Mode)'
+        },
+        receipt: {
+          sent: 'Booking confirmation sent!',
+          logged: 'Booking confirmation logged to console'
+        }
       },
       myBookings: {
         title: 'My Bookings',
@@ -59,7 +77,8 @@ const resources = {
         status: {
           paid: 'Paid',
           pending: 'Pending',
-          cancelled: 'Cancelled'
+          cancelled: 'Cancelled',
+          mockPaid: 'Test Paid'
         }
       },
       login: {
@@ -122,12 +141,30 @@ const resources = {
         court: '场地',
         available: '空闲',
         booked: '已订',
+        confirmTitle: '确认预订',
         confirm: '确认预订',
         total: '总计',
         name: '您的姓名',
         phone: '联系电话',
+        email: '邮箱（选填）',
         success: '预订成功！',
-        error: '预订失败，请重试。'
+        error: '预订失败，请重试。',
+        proceedToPay: '前往支付',
+        processing: '处理中...',
+        payment: {
+          title: '支付',
+          confirmPay: '确认支付'
+        },
+        testMode: {
+          banner: '测试模式 - 支付为模拟',
+          paymentBanner: '测试模式：不会产生实际扣款',
+          confirmPay: '确认支付（测试模式）',
+          success: '预订成功！（测试模式）'
+        },
+        receipt: {
+          sent: '预订确认已发送！',
+          logged: '预订确认已记录到控制台'
+        }
       },
       myBookings: {
         title: '我的预订',
@@ -137,7 +174,8 @@ const resources = {
         status: {
           paid: '已支付',
           pending: '待支付',
-          cancelled: '已取消'
+          cancelled: '已取消',
+          mockPaid: '测试支付'
         }
       },
       login: {

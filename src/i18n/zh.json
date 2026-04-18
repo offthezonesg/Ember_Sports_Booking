@@ -62,6 +62,28 @@
       "name": "您的姓名",
       "phone": "联系电话",
       "submit": "确认预订"
+    },
+    "confirmTitle": "确认预订",
+    "name": "您的姓名",
+    "phone": "联系电话",
+    "email": "邮箱（选填）",
+    "total": "总计",
+    "proceedToPay": "前往支付",
+    "processing": "处理中...",
+    "error": "预订失败，请重试。",
+    "payment": {
+      "title": "支付",
+      "confirmPay": "确认支付"
+    },
+    "testMode": {
+      "banner": "测试模式 - 支付为模拟",
+      "paymentBanner": "测试模式：不会产生实际扣款",
+      "confirmPay": "确认支付（测试模式）",
+      "success": "预订成功！（测试模式）"
+    },
+    "receipt": {
+      "sent": "预订确认已发送！",
+      "logged": "预订确认已记录到控制台"
     }
   },
   "myBookings": {
@@ -70,7 +92,8 @@
     "status": {
       "pending": "待支付",
       "paid": "已支付",
-      "cancelled": "已取消"
+      "cancelled": "已取消",
+      "mockPaid": "测试支付"
     },
     "cancel": "取消"
   },

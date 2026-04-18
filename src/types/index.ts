@@ -16,7 +16,7 @@ export interface Booking {
   end_time: string;
   status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
   total_amount: number;
-  payment_status: 'unpaid' | 'paid' | 'refunded' | null;
+  payment_status: 'unpaid' | 'paid' | 'mock_paid' | 'refunded' | null;
   guest_name: string | null;
   guest_phone: string | null;
   created_at: string | null;

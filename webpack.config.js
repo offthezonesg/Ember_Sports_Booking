@@ -1,5 +1,9 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
+
+// Load environment variables from .env file in development
+try { require('dotenv').config(); } catch (e) { /* dotenv not available in production */ }
 
 module.exports = (env, argv) => {
   const isDev = argv.mode !== 'production';
@@ -56,6 +60,11 @@ module.exports = (env, argv) => {
       new HtmlWebpackPlugin({
         template: './index.html',
         inject: 'body'
+      }),
+      new webpack.DefinePlugin({
+        'process.env.SUPABASE_URL': JSON.stringify(process.env.SUPABASE_URL || ''),
+        'process.env.SUPABASE_ANON_KEY': JSON.stringify(process.env.SUPABASE_ANON_KEY || ''),
+        'process.env.PAYMENT_ENABLED': JSON.stringify(process.env.PAYMENT_ENABLED || 'false'),
       })
     ]
   };

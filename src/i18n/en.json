@@ -41,10 +41,29 @@
     "court": "Court",
     "available": "Available",
     "booked": "Booked",
+    "confirmTitle": "Confirm Booking",
     "confirm": "Confirm Booking",
     "name": "Your Name",
     "phone": "Phone Number",
-    "total": "Total"
+    "email": "Email (optional)",
+    "total": "Total",
+    "proceedToPay": "Proceed to Payment",
+    "processing": "Processing...",
+    "error": "Failed to create booking. Please try again.",
+    "payment": {
+      "title": "Payment",
+      "confirmPay": "Confirm Payment"
+    },
+    "testMode": {
+      "banner": "Test Mode - Payments Simulated",
+      "paymentBanner": "Test Mode: No real payment will be charged",
+      "confirmPay": "Confirm Payment (Test Mode)",
+      "success": "Booking confirmed! (Test Mode)"
+    },
+    "receipt": {
+      "sent": "Booking confirmation sent!",
+      "logged": "Booking confirmation logged to console"
+    }
   },
   "myBookings": {
     "title": "My Bookings",
@@ -53,7 +72,8 @@
     "status": {
       "paid": "Paid",
       "pending": "Pending Payment",
-      "cancelled": "Cancelled"
+      "cancelled": "Cancelled",
+      "mockPaid": "Test Paid"
     }
   },
   "login": {

@@ -1,0 +1,616 @@
+# EMBER SPORTS - COMPLETE CODEBASE FOR OPTIMIZATION
+
+## PROJECT OVERVIEW
+A React + TypeScript pickleball court booking application with Supabase backend, deployed on Vercel.
+
+---
+
+## FILE 1: package.json
+```json
+{
+  "name": "hepaishe-court-booking",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "webpack serve",
+    "build": "webpack --mode production",
+    "typecheck": "tsc --noEmit",
+    "vercel-build": "webpack --mode production"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.8.0",
+    "recharts": "^2.10.0",
+    "date-fns": "^2.30.0",
+    "framer-motion": "^11.16.1",
+    "lucide-react": "^0.294.0",
+    "@supabase/supabase-js": "^2.98.0",
+    "react-i18next": "^13.5.0",
+    "i18next": "^23.7.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.23.5",
+    "@babel/preset-env": "^7.23.5",
+    "@babel/preset-react": "^7.23.5",
+    "@babel/preset-typescript": "^7.23.5",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "autoprefixer": "^10.4.16",
+    "babel-loader": "^9.1.3",
+    "css-loader": "^6.8.1",
+    "html-webpack-plugin": "^5.5.3",
+    "postcss": "^8.4.31",
+    "postcss-loader": "^7.3.3",
+    "style-loader": "^3.3.3",
+    "tailwindcss": "^3.3.5",
+    "typescript": "^5.3.3",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1"
+  }
+}
+```
+
+---
+
+## FILE 2: webpack.config.js
+```javascript
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+module.exports = {
+  entry: './src/index.tsx',
+  output: {
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'bundle.js',
+    publicPath: '/',
+    clean: true,
+  },
+  resolve: {
+    extensions: ['.tsx', '.ts', '.js', '.jsx'],
+  },
+  module: {
+    rules: [
+      {
+        test: /\.(ts|tsx)$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              '@babel/preset-env',
+              ['@babel/preset-react', { runtime: 'automatic' }],
+              '@babel/preset-typescript',
+            ],
+          },
+        },
+      },
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader', 'postcss-loader'],
+      },
+    ],
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: './index.html',
+    }),
+  ],
+  devServer: {
+    historyApiFallback: true,
+    port: 3266,
+    hot: true,
+  },
+  mode: 'development',
+  devtool: 'source-map',
+};
+```
+
+---
+
+## FILE 3: tailwind.config.js
+```javascript
+module.exports = {
+  content: [
+    './src/**/*.{js,jsx,ts,tsx}',
+    './index.html'
+  ],
+  theme: {
+    extend: {
+      colors: {
+        primary: '#f97316',
+        secondary: '#fb923c',
+        accent: '#fdba74',
+      }
+    }
+  },
+  plugins: []
+};
+```
+
+---
+
+## FILE 4: vercel.json
+```json
+{
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "installCommand": "pnpm install",
+  "buildCommand": "pnpm run build"
+}
+```
+
+---
+
+## FILE 5: src/index.tsx
+```typescript
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import App from './App';
+import './styles/index.css';
+
+const container = document.getElementById('root');
+if (container) {
+  const root = createRoot(container);
+  root.render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  );
+}
+```
+
+---
+
+## FILE 6: src/App.tsx
+```typescript
+import React, { useState, useEffect } from 'react';
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { I18nextProvider } from 'react-i18next';
+import i18n from './i18n';
+import Header from './components/Header';
+import Home from './pages/Home';
+import Booking from './pages/Booking';
+import MyBookings from './pages/MyBookings';
+import Login from './pages/Login';
+import { supabase } from './supabase/client';
+
+function App() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+          className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full"
+        />
+      </div>
+    );
+  }
+
+  return (
+    <I18nextProvider i18n={i18n}>
+      <HashRouter>
+        <div className="min-h-screen bg-gray-50">
+          <Header user={user} />
+          <AnimatePresence mode="wait">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/booking" element={<Booking user={user} />} />
+              <Route path="/my-bookings" element={user ? <MyBookings user={user} /> : <Navigate to="/login" />} />
+              <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
+            </Routes>
+          </AnimatePresence>
+        </div>
+      </HashRouter>
+    </I18nextProvider>
+  );
+}
+
+export default App;
+```
+
+---
+
+## FILE 7: src/components/Header.tsx
+```typescript
+import React, { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Calendar, User, Home, Menu, X, Globe } from 'lucide-react';
+import { supabase } from '../supabase/client';
+import { useTranslation } from '../hooks/useTranslation';
+
+interface HeaderProps {
+  user: any;
+}
+
+const Header: React.FC<HeaderProps> = ({ user }) => {
+  const location = useLocation();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { t, lang, setLang } = useTranslation();
+
+  const navItems = [
+    { path: '/', label: t('nav.home'), icon: Home },
+    { path: '/booking', label: t('nav.booking'), icon: Calendar },
+    { path: '/my-bookings', label: t('nav.myBookings'), icon: User },
+  ];
+
+  const toggleLang = () => {
+    setLang(lang === 'en' ? 'zh' : 'en');
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setMobileMenuOpen(false);
+  };
+
+  return (
+    <motion.header
+      initial={{ y: -20, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100"
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          <Link to="/" className="flex items-center gap-2 flex-shrink-0">
+            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
+              <span className="text-white font-bold text-sm">合</span>
+            </div>
+            <span className="text-xl font-bold text-gray-900 whitespace-nowrap" style={{ fontFamily: "'Courier New', monospace", letterSpacing: '0.2em' }}>合拍社</span>
+          </Link>
+
+          <nav className="hidden md:flex items-center gap-1">
+            {navItems.map((item) => {
+              const isActive = location.pathname === item.path;
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                    isActive ? 'bg-primary/10 text-primary' : 'text-gray-600 hover:bg-gray-50'
+                  }`}
+                >
+                  <item.icon className="w-4 h-4" />
+                  <span className="font-medium">{item.label}</span>
+                </Link>
+              );
+            })}
+          </nav>
+
+          <div className="flex items-center gap-3">
+            <button
+              onClick={toggleLang}
+              className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              title={lang === 'en' ? 'Switch to Chinese' : '切换到英文'}
+            >
+              <Globe className="w-5 h-5 text-gray-600" />
+            </button>
+
+            {user ? (
+              <button
+                onClick={handleLogout}
+                className="hidden md:flex items-center gap-2 px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
+              >
+                <span className="font-medium">{t('nav.logout')}</span>
+              </button>
+            ) : (
+              <Link
+                to="/login"
+                className="hidden md:flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
+              >
+                <span className="font-medium">{t('nav.login')}</span>
+              </Link>
+            )}
+
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 rounded-lg hover:bg-gray-100"
+            >
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden border-t border-gray-100 bg-white"
+          >
+            <div className="px-4 py-3 space-y-1">
+              {navItems.map((item) => {
+                const isActive = location.pathname === item.path;
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                      isActive ? 'bg-primary/10 text-primary' : 'text-gray-600'
+                    }`}
+                  >
+                    <item.icon className="w-5 h-5" />
+                    <span className="font-medium">{item.label}</span>
+                  </Link>
+                );
+              })}
+              {user ? (
+                <button
+                  onClick={handleLogout}
+                  className="w-full flex items-center gap-3 px-4 py-3 text-gray-600 rounded-lg"
+                >
+                  <span className="font-medium">{t('nav.logout')}</span>
+                </button>
+              ) : (
+                <Link
+                  to="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 bg-primary text-white rounded-lg"
+                >
+                  <span className="font-medium">{t('nav.login')}</span>
+                </Link>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.header>
+  );
+};
+
+export default Header;
+```
+
+---
+
+## FILE 8: src/pages/Home.tsx
+```typescript
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { ArrowRight, MapPin, Clock, Shield } from 'lucide-react';
+import HeroIllustration from '../components/HeroIllustration';
+import { useTranslation } from 'react-i18next';
+
+const Home: React.FC = () => {
+  const { t } = useTranslation();
+
+  const features = [
+    {
+      icon: MapPin,
+      title: t('features.courts.title'),
+      description: t('features.courts.desc'),
+    },
+    {
+      icon: Clock,
+      title: t('features.flexible.title'),
+      description: t('features.flexible.desc'),
+    },
+    {
+      icon: Shield,
+      title: t('features.secure.title'),
+      description: t('features.secure.desc'),
+    },
+  ];
+
+  return (
+    <div className="min-h-screen">
+      <section className="relative py-16 lg:py-24 overflow-hidden bg-gradient-to-br from-primary/5 via-white to-secondary/5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="text-center lg:text-left">
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="text-4xl sm:text-5xl lg:text-6xl text-gray-900 mb-6"
+                style={{ 
+                  fontFamily: "'Courier New', Courier, monospace", 
+                  letterSpacing: '0.3em', 
+                  fontWeight: 500,
+                  wordSpacing: '0.5em'
+                }}
+              >
+                {t('brand')}
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="text-lg text-gray-600 mb-8"
+              >
+                {t('hero.subtitle')}
+              </motion.p>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+              >
+                <Link
+                  to="/booking"
+                  className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white font-medium rounded-xl hover:bg-primary/90 transition-all hover:scale-105"
+                >
+                  {t('hero.cta')}
+                  <ArrowRight className="w-5 h-5" />
+                </Link>
+              </motion.div>
+            </div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="hidden lg:block"
+            >
+              <HeroIllustration />
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-16 lg:py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+              {t('home.feature.venue.title')}
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              {t('home.feature.venue.desc')}
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {features.map((feature, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className="p-6 rounded-2xl bg-gray-50 hover:bg-primary/5 transition-colors"
+              >
+                <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4">
+                  <feature.icon className="w-6 h-6 text-primary" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  {feature.title}
+                </h3>
+                <p className="text-gray-600">{feature.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+};
+
+export default Home;
+```
+
+---
+
+## FILE 9: src/i18n/en.json
+```json
+{
+  "brand": "Ember Sports",
+  "nav": {
+    "home": "Home",
+    "booking": "Book a Court",
+    "myBookings": "My Bookings",
+    "login": "Sign In",
+    "logout": "Sign Out"
+  },
+  "home": {
+    "hero": {
+      "title": "Ember Sports",
+      "subtitle": "Pickleball",
+      "description": "Professional pickleball court management, delivering a premium sports experience",
+      "cta": "Book Now"
+    },
+    "feature": {
+      "venue": {
+        "title": "Premium Courts",
+        "desc": "8 professional pickleball courts with professional lighting and facilities"
+      },
+      "booking": {
+        "title": "Flexible Booking",
+        "desc": "Book by the hour and check court availability anytime"
+      },
+      "payment": {
+        "title": "Secure Payment",
+        "desc": "Pay online and your court is locked immediately after confirmation"
+      }
+    }
+  }
+}
+```
+
+---
+
+## FILE 10: src/supabase/client.ts
+```typescript
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = process.env.SUPABASE_URL || 'https://sjrinqsekowhgtikhnvv.supabase.co';
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+  },
+});
+```
+
+---
+
+## INDEX.HTML (Static Hero Section)
+```html
+<h1 class="text-5xl sm:text-7xl lg:text-8xl leading-tight max-w-4xl mb-6" 
+    style="font-family:'Garamond', 'Baskerville', 'Georgia', serif; 
+           letter-spacing: 0.08em; 
+           word-spacing: 0.1em; 
+           font-weight: 600;">
+    Play Hard.<br>
+    <em class="text-[#F4611A] not-italic">Play Ember.</em>
+</h1>
+```
+
+---
+
+## OPTIMIZATION RECOMMENDATIONS NEEDED:
+
+1. **Performance Optimization**
+   - Code splitting and lazy loading for routes
+   - Bundle size reduction
+   - Image optimization strategy
+
+2. **SEO Improvements**
+   - Meta tags and Open Graph
+   - Server-side rendering consideration
+   - Semantic HTML structure
+
+3. **Accessibility**
+   - ARIA labels implementation
+   - Keyboard navigation
+   - Color contrast ratios
+
+4. **Code Quality**
+   - TypeScript strict mode
+   - Error boundaries
+   - Component reusability
+
+5. **Build Optimization**
+   - Webpack configuration tuning
+   - Tree shaking improvements
+   - Caching strategies
+
+6. **Database & API**
+   - Query optimization
+   - Indexing strategy
+   - Real-time subscription efficiency
+
+---
+
+END OF CODEBASE DOCUMENT
