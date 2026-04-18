@@ -8,6 +8,14 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  overflow-x: hidden;
+}
+
 :root {
   --bg-color: #ffffff;
   --text-color: #000000;
@@ -22,13 +30,24 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Inter', 'Noto Sans SC', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--bg-color);
   color: var(--text-color);
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  body {
+    font-size: 15px;
+  }
+}
+
+@media (min-width: 1024px) {
+  body {
+    font-size: 16px;
+  }
 }
 
 .scrollbar-thin::-webkit-scrollbar {
@@ -47,4 +66,24 @@ body {
 
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
   background: #64748b;
+}
+
+/* Touch action utilities for mobile */
+.touch-pan-x {
+  touch-action: pan-x;
+}
+
+.touch-pan-y {
+  touch-action: pan-y;
+}
+
+.touch-pan-x-pan-y {
+  touch-action: pan-x pan-y;
+}
+
+/* Improve scrolling on iOS */
+@supports (-webkit-touch-callout: none) {
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+  }
 }

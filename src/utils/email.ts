@@ -11,8 +11,10 @@ interface BookingReceipt {
 
 export async function sendBookingReceipt(receipt: BookingReceipt): Promise<boolean> {
   // TODO: Replace with real email provider (Resend, SendGrid, etc.)
-  console.log('📧 Booking Receipt:', JSON.stringify(receipt, null, 2));
-  console.log('📧 Email would be sent to:', receipt.guestEmail || 'registered user');
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('📧 Booking Receipt:', JSON.stringify(receipt, null, 2));
+    console.log('📧 Email would be sent to:', receipt.guestEmail || 'registered user');
+  }
   // Return true to indicate "sent" (mocked)
   return true;
 }

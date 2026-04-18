@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Calendar, Clock } from 'lucide-react';
+import { Calendar, Clock, AlertCircle } from 'lucide-react';
 import { supabase } from '../supabase/client';
 import { useTranslation } from 'react-i18next';
 
@@ -27,25 +27,41 @@ const MyBookings: React.FC<MyBookingsProps> = ({ user }) => {
   const { t } = useTranslation();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [cancellingId, setCancellingId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchBookings();
   }, [user]);
 
   const fetchBookings = async () => {
-    const { data } = await supabase
+    const { data, error: fetchError } = await supabase
       .from('bookings')
       .select('*, court:courts(name, description)')
       .eq('user_id', user.id)
       .order('booking_date', { ascending: false });
-    if (data) setBookings(data as Booking[]);
+    if (fetchError) {
+      console.error('Fetch bookings error:', fetchError);
+      setError(t('common.error') + ': ' + fetchError.message);
+    } else if (data) {
+      setBookings(data as Booking[]);
+    }
     setLoading(false);
   };
 
   const handleCancel = async (id: string) => {
     if (!window.confirm(t('myBookings.cancelConfirm'))) return;
-    await supabase.from('bookings').update({ status: 'cancelled' }).eq('id', id);
-    fetchBookings();
+    setCancellingId(id);
+    try {
+      const { error: cancelError } = await supabase.from('bookings').update({ status: 'cancelled' }).eq('id', id);
+      if (cancelError) {
+        console.error('Cancel booking error:', cancelError);
+        setError(t('common.error') + ': ' + cancelError.message);
+      }
+    } finally {
+      setCancellingId(null);
+      fetchBookings();
+    }
   };
 
   const getStatus = (status: string, payment: string) => {
@@ -70,7 +86,20 @@ const MyBookings: React.FC<MyBookingsProps> = ({ user }) => {
   return (
     <div className="min-h-screen bg-gray-50 py-4 sm:py-8 px-3 sm:px-4">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">{t('myBookings.title')}</h1>
+        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 sm:mb-6">{t('myBookings.title')}</h1>
+
+        {error && (
+          <div className="mb-4 flex items-center gap-2 px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+            <AlertCircle className="w-4 h-4 flex-shrink-0" />
+            <span>{error}</span>
+            <button
+              onClick={() => setError(null)}
+              className="ml-auto text-red-500 hover:text-red-700 font-medium"
+            >
+              {t('common.dismiss') || 'Dismiss'}
+            </button>
+          </div>
+        )}
 
         {bookings.length === 0 ? (
           <div className="text-center py-12 bg-white rounded-2xl">
@@ -90,7 +119,7 @@ const MyBookings: React.FC<MyBookingsProps> = ({ user }) => {
                 >
                   <div className="flex flex-col gap-3">
                     <div className="flex items-center justify-between">
-                      <h3 className="font-semibold text-gray-900">{b.court?.name}</h3>
+                      <h3 className="font-semibold text-base text-gray-900">{b.court?.name}</h3>
                       <span className={`px-2 py-1 text-xs rounded-full ${status.color}`}>
                         {status.text}
                       </span>
@@ -112,9 +141,10 @@ const MyBookings: React.FC<MyBookingsProps> = ({ user }) => {
                       {b.status !== 'cancelled' && b.status !== 'completed' && (
                         <button
                           onClick={() => handleCancel(b.id)}
-                          className="text-sm text-red-500 hover:text-red-600"
+                          disabled={cancellingId === b.id}
+                          className="min-h-[44px] px-3 text-sm text-red-500 hover:text-red-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg hover:bg-red-50 transition-colors"
                         >
-                          {t('myBookings.cancel')}
+                          {cancellingId === b.id ? t('common.loading') : t('myBookings.cancel')}
                         </button>
                       )}
                     </div>

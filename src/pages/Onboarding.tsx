@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { User, Check, AlertCircle } from 'lucide-react';
 import { supabase } from '../supabase/client';
+import { useTranslation } from 'react-i18next';
 
 interface Profile {
   id: string;
@@ -14,10 +15,11 @@ interface Profile {
 
 const Onboarding: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [nickname, setNickname] = useState('');
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string>('');
+  const [error, setError] = useState<string | null>(null);
   const [userId, setUserId] = useState<string>('');
 
   useEffect(() => {
@@ -42,6 +44,9 @@ const Onboarding: React.FC = () => {
 
         if (profileError) {
           console.error('Profile query error:', profileError);
+          setError(t('onboarding.errorLoadProfile'));
+          setLoading(false);
+          return;
         }
 
         // If profile exists and is not first login, redirect to booking
@@ -56,26 +61,26 @@ const Onboarding: React.FC = () => {
         }
 
         setLoading(false);
-      } catch (err) {
+      } catch (err: any) {
         console.error('Check profile error:', err);
-        setError('加载失败，请刷新页面');
+        setError(err.message || t('onboarding.errorLoadProfile'));
         setLoading(false);
       }
     };
 
     checkProfile();
-  }, [navigate]);
+  }, [navigate, t]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!nickname.trim()) {
-      setError('请输入昵称');
+      setError(t('onboarding.errorNicknameRequired'));
       return;
     }
 
     if (nickname.trim().length < 2) {
-      setError('昵称至少需要2个字符');
+      setError(t('onboarding.errorNicknameLength'));
       return;
     }
 
@@ -87,7 +92,7 @@ const Onboarding: React.FC = () => {
       const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
-        throw new Error('用户未登录');
+        throw new Error('User not logged in');
       }
 
       // Upsert profile
@@ -112,7 +117,7 @@ const Onboarding: React.FC = () => {
       
     } catch (err: any) {
       console.error('Submit error:', err);
-      setError(err.message || '保存失败，请重试');
+      setError(err.message || t('onboarding.errorSaveProfile'));
       setSubmitting(false);
     }
   };
@@ -140,21 +145,21 @@ const Onboarding: React.FC = () => {
           <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
             <User className="w-8 h-8 text-primary" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">完善资料</h1>
-          <p className="text-gray-600">设置您的昵称以开始预订场地</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('onboarding.title')}</h1>
+          <p className="text-gray-600">{t('onboarding.subtitle')}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="nickname" className="block text-sm font-medium text-gray-700 mb-2">
-              昵称
+              {t('onboarding.nickname')}
             </label>
             <input
               type="text"
               id="nickname"
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
-              placeholder="请输入您的昵称"
+              placeholder={t('onboarding.nicknamePlaceholder')}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
               disabled={submitting}
               autoFocus
@@ -184,19 +189,19 @@ const Onboarding: React.FC = () => {
                   transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
                   className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
                 />
-                <span>保存中...</span>
+                <span>{t('onboarding.saving')}</span>
               </>
             ) : (
               <>
                 <Check className="w-5 h-5" />
-                <span>开始使用</span>
+                <span>{t('onboarding.getStarted')}</span>
               </>
             )}
           </button>
         </form>
 
         <p className="mt-6 text-center text-sm text-gray-500">
-          完成资料后，您将可以预订场地
+          {t('onboarding.hint')}
         </p>
       </motion.div>
     </div>

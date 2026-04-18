@@ -266,7 +266,7 @@ const BookingPage: React.FC<{ user: any }> = ({ user }) => {
           className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"
         >
           <div className="p-4 md:p-6 border-b border-gray-100">
-            <h1 className="text-xl md:text-2xl font-bold text-gray-900 mb-4">{t('booking.title')}</h1>
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{t('booking.title')}</h1>
             <div className="flex items-center gap-2">
               {weekDays.map((day) => (
                 <button
@@ -342,7 +342,7 @@ const BookingPage: React.FC<{ user: any }> = ({ user }) => {
                           key={`${court.id}-${time}`}
                           onClick={() => handleSlotClick(court, time)}
                           disabled={booked}
-                          className={`flex-shrink-0 w-16 py-3 rounded-xl text-sm font-medium transition-all ${
+                          className={`flex-shrink-0 w-16 min-h-[44px] py-3 rounded-xl text-sm font-medium transition-all ${
                             booked
                               ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                               : 'bg-white border-2 border-primary/20 text-primary hover:bg-primary/5'
@@ -367,18 +367,18 @@ const BookingPage: React.FC<{ user: any }> = ({ user }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+            className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50 p-0 sm:p-4"
             onClick={() => setShowModal(false)}
           >
             <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-white rounded-2xl p-6 w-full max-w-md"
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              className="bg-white rounded-t-2xl sm:rounded-2xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-gray-900">{t('booking.confirmTitle')}</h2>
+                <h2 className="text-xl md:text-2xl font-semibold text-gray-900">{t('booking.confirmTitle')}</h2>
                 <button onClick={() => setShowModal(false)} className="p-2 hover:bg-gray-100 rounded-lg">
                   <X className="w-5 h-5 text-gray-500" />
                 </button>
@@ -416,7 +416,7 @@ const BookingPage: React.FC<{ user: any }> = ({ user }) => {
               <button
                 onClick={handleConfirmBooking}
                 disabled={!user && (!guestName || !guestPhone)}
-                className="w-full py-3 bg-primary text-white font-medium rounded-xl hover:bg-primary/90 transition-colors disabled:opacity-50"
+                className="w-full min-h-[44px] py-3 bg-primary text-white font-medium rounded-xl hover:bg-primary/90 transition-colors disabled:opacity-50"
               >
                 {t('booking.proceedToPay')}
               </button>
@@ -432,18 +432,18 @@ const BookingPage: React.FC<{ user: any }> = ({ user }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+            className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50 p-0 sm:p-4"
             onClick={() => !submitting && setShowPaymentModal(false)}
           >
             <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-white rounded-2xl p-6 w-full max-w-md"
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              className="bg-white rounded-t-2xl sm:rounded-2xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-gray-900">{t('booking.payment.title')}</h2>
+                <h2 className="text-xl md:text-2xl font-semibold text-gray-900">{t('booking.payment.title')}</h2>
                 {!submitting && (
                   <button onClick={() => setShowPaymentModal(false)} className="p-2 hover:bg-gray-100 rounded-lg">
                     <X className="w-5 h-5 text-gray-500" />
@@ -488,7 +488,7 @@ const BookingPage: React.FC<{ user: any }> = ({ user }) => {
                 <button
                   onClick={handlePayment}
                   disabled={submitting}
-                  className="w-full py-3 bg-amber-500 text-white font-medium rounded-xl hover:bg-amber-600 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="w-full min-h-[44px] py-3 bg-amber-500 text-white font-medium rounded-xl hover:bg-amber-600 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   <CreditCard className="w-5 h-5" />
                   {submitting ? t('booking.processing') : t('booking.testMode.confirmPay')}
@@ -497,7 +497,7 @@ const BookingPage: React.FC<{ user: any }> = ({ user }) => {
                 <button
                   onClick={handlePayment}
                   disabled={submitting}
-                  className="w-full py-3 bg-primary text-white font-medium rounded-xl hover:bg-primary/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="w-full min-h-[44px] py-3 bg-primary text-white font-medium rounded-xl hover:bg-primary/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   <CreditCard className="w-5 h-5" />
                   {submitting ? t('booking.processing') : t('booking.payment.confirmPay')}

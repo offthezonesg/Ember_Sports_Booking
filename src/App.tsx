@@ -12,6 +12,7 @@ import Login from './pages/Login';
 import AuthCallback from './pages/AuthCallback';
 import Onboarding from './pages/Onboarding';
 import { supabase } from './supabase/client';
+import ErrorBoundary from './components/ErrorBoundary';
 
 function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -43,6 +44,7 @@ function App() {
   }
 
   return (
+    <ErrorBoundary>
     <I18nextProvider i18n={i18n}>
       <HashRouter>
         <div className="min-h-screen bg-gray-50">
@@ -60,6 +62,7 @@ function App() {
         </div>
       </HashRouter>
     </I18nextProvider>
+    </ErrorBoundary>
   );
 }
 

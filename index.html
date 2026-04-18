@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ember Sports - Shanghai's Premier Pickleball Venue</title>
+    <!-- Tailwind CDN: needed for static fallback; webpack/PostCSS build does not process this file -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;900&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -11,6 +12,7 @@
         body { font-family: 'Barlow', sans-serif; }
         .modal-overlay { display: none; }
         .modal-overlay.active { display: flex; }
+        .lang-btn.active { background: white; color: #F4611A; box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
     </style>
 </head>
 <body class="bg-white text-[#111]">
@@ -19,10 +21,38 @@
 <nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-[#eee]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
         <div class="text-xl font-black tracking-tight" style="font-family:'Barlow Condensed',sans-serif;"><span class="text-[#F4611A]">Ember</span> Sports</div>
-        <div class="flex items-center gap-4 sm:gap-6">
-            <a href="#booking" class="text-sm font-semibold text-[#111] hover:text-[#F4611A] transition-colors">Book</a>
-            <button id="myBookingsBtn" class="text-sm font-semibold text-[#111] hover:text-[#F4611A] transition-colors hidden">My Bookings</button>
-            <button id="authBtn" onclick="handleAuthClick()" class="bg-[#F4611A] text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-[#FF8C42] transition-colors">Log In</button>
+        <!-- Desktop Nav -->
+        <div class="hidden lg:flex items-center gap-4 sm:gap-6">
+            <!-- Language Toggle -->
+            <div class="flex items-center bg-gray-100 rounded-full p-0.5">
+                <button onclick="switchLang('en')" class="lang-btn px-2.5 py-1 text-xs font-semibold rounded-full transition-all active" data-lang="en">EN</button>
+                <button onclick="switchLang('zh')" class="lang-btn px-2.5 py-1 text-xs font-semibold rounded-full transition-all" data-lang="zh">中文</button>
+            </div>
+            <a href="#booking" class="text-sm font-semibold text-[#111] hover:text-[#F4611A] transition-colors" data-i18n="nav_book">Book</a>
+            <button id="myBookingsBtn" class="text-sm font-semibold text-[#111] hover:text-[#F4611A] transition-colors hidden" data-i18n="nav_myBookings">My Bookings</button>
+            <button id="authBtn" onclick="handleAuthClick()" class="bg-[#F4611A] text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-[#FF8C42] transition-colors" data-i18n="nav_login">Log In</button>
+        </div>
+        <!-- Mobile Hamburger -->
+        <button id="mobileMenuBtn" onclick="toggleMobileMenu()" class="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors" aria-label="Menu">
+            <svg id="hamburgerIcon" class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+            <svg id="closeIcon" class="w-6 h-6 text-gray-600 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+    </div>
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="hidden lg:hidden border-t border-gray-100 bg-white">
+        <div class="px-4 py-4 space-y-2">
+            <!-- Language Toggle Mobile -->
+            <div class="flex items-center justify-center bg-gray-100 rounded-full p-0.5 w-fit mx-auto mb-4">
+                <button onclick="switchLang('en'); toggleMobileMenu();" class="lang-btn px-3 py-1.5 text-sm font-semibold rounded-full transition-all active" data-lang="en">EN</button>
+                <button onclick="switchLang('zh'); toggleMobileMenu();" class="lang-btn px-3 py-1.5 text-sm font-semibold rounded-full transition-all" data-lang="zh">中文</button>
+            </div>
+            <a href="#booking" onclick="toggleMobileMenu()" class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-100 transition-colors font-medium" data-i18n="nav_book">Book</a>
+            <button id="mobileMyBookingsBtn" onclick="toggleMobileMenu(); document.getElementById('myBookingsSection').scrollIntoView({behavior:'smooth'});" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-100 transition-colors font-medium hidden" data-i18n="nav_myBookings">My Bookings</button>
+            <button id="mobileAuthBtn" onclick="toggleMobileMenu(); handleAuthClick();" class="w-full flex items-center gap-3 px-4 py-3 bg-[#F4611A] text-white rounded-xl font-medium" data-i18n="nav_login">Log In</button>
         </div>
     </div>
 </nav>
@@ -31,23 +61,23 @@
 <section id="hero" class="min-h-screen flex flex-col justify-center items-start px-4 sm:px-6 lg:px-8 py-32 bg-[#FFF4EE] relative overflow-hidden">
     <div class="absolute right-[-10%] top-1/2 -translate-y-1/2 w-[520px] h-[520px] rounded-full bg-[#F4611A] opacity-[0.07] pointer-events-none"></div>
     <div class="max-w-7xl mx-auto w-full relative z-10">
-        <span class="inline-block bg-[#F4611A] text-white text-xs font-bold tracking-widest uppercase px-4 py-1 rounded-full mb-6">
+        <span class="inline-block bg-[#F4611A] text-white text-xs font-bold tracking-widest uppercase px-4 py-1 rounded-full mb-6" data-i18n="hero_badge">
             Shanghai's Premier Pickleball Venue
         </span>
         <h1 class="text-5xl sm:text-7xl lg:text-8xl leading-tight max-w-4xl mb-6" style="font-family:'Garamond', 'Baskerville', 'Georgia', serif; letter-spacing: 0.08em; word-spacing: 0.1em; font-weight: 600;">
-            Play Hard.<br><em class="text-[#F4611A] not-italic">Play Ember.</em>
+            <span data-i18n="hero_title1">Play Hard.</span><br><em class="text-[#F4611A] not-italic" data-i18n="hero_title2">Play Ember.</em>
         </h1>
-        <p class="text-lg text-[#555] max-w-xl mb-10 leading-relaxed">
-            上海市中心 8 片专业匹克球场。为认真对待运动的您打造。
+        <p class="text-lg text-[#555] max-w-xl mb-10 leading-relaxed" data-i18n="hero_desc">
+            8 professional pickleball courts in central Shanghai. Built for those who take their game seriously.
         </p>
         <div class="flex gap-4 flex-wrap mb-16">
-            <a href="#booking" class="bg-[#F4611A] text-white px-8 py-3.5 rounded-full font-bold text-lg hover:bg-[#FF8C42] transition-all hover:-translate-y-0.5 shadow-lg shadow-orange-500/20">Book a Court</a>
-            <a href="#about" class="bg-transparent text-[#111] px-8 py-3.5 rounded-full font-semibold text-lg border-2 border-[#ddd] hover:border-[#F4611A] transition-all hover:-translate-y-0.5">Learn More</a>
+            <a href="#booking" class="bg-[#F4611A] text-white px-8 py-3.5 rounded-full font-bold text-lg hover:bg-[#FF8C42] transition-all hover:-translate-y-0.5 shadow-lg shadow-orange-500/20" data-i18n="hero_cta">Book a Court</a>
+            <a href="#about" class="bg-transparent text-[#111] px-8 py-3.5 rounded-full font-semibold text-lg border-2 border-[#ddd] hover:border-[#F4611A] transition-all hover:-translate-y-0.5" data-i18n="hero_learnMore">Learn More</a>
         </div>
         <div class="flex gap-12 sm:gap-20">
-            <div><div class="text-4xl font-black text-[#F4611A]">8</div><div class="text-sm text-[#555] font-medium mt-1">Pickleball Courts</div></div>
-            <div><div class="text-4xl font-black text-[#F4611A]">7AM</div><div class="text-sm text-[#555] font-medium mt-1">Opens Daily</div></div>
-            <div><div class="text-4xl font-black text-[#F4611A]">10PM</div><div class="text-sm text-[#555] font-medium mt-1">Closes Daily</div></div>
+            <div><div class="text-4xl font-black text-[#F4611A]">8</div><div class="text-sm text-[#555] font-medium mt-1" data-i18n="hero_courts">Pickleball Courts</div></div>
+            <div><div class="text-4xl font-black text-[#F4611A]">7AM</div><div class="text-sm text-[#555] font-medium mt-1" data-i18n="hero_opens">Opens Daily</div></div>
+            <div><div class="text-4xl font-black text-[#F4611A]">10PM</div><div class="text-sm text-[#555] font-medium mt-1" data-i18n="hero_closes">Closes Daily</div></div>
         </div>
     </div>
 </section>
@@ -55,26 +85,26 @@
 <!-- About Section -->
 <section id="about" class="py-24 px-4 sm:px-6 lg:px-8 bg-white">
     <div class="max-w-7xl mx-auto">
-        <span class="inline-block bg-[#FFF4EE] text-[#F4611A] text-xs font-bold tracking-widest uppercase px-4 py-1 rounded-full mb-4">About Us</span>
-        <h2 class="text-4xl md:text-5xl font-extrabold tracking-tight max-w-2xl mb-4">Shanghai's home for pickleball</h2>
-        <p class="text-[#555] max-w-xl text-lg">合拍社致力于在上海推广匹克球运动——从初学者到竞技选手，这里都是您的主场。</p>
+        <span class="inline-block bg-[#FFF4EE] text-[#F4611A] text-xs font-bold tracking-widest uppercase px-4 py-1 rounded-full mb-4" data-i18n="about_badge">About Us</span>
+        <h2 class="text-4xl md:text-5xl font-extrabold tracking-tight max-w-2xl mb-4" data-i18n="about_title">Shanghai's home for pickleball</h2>
+        <p class="text-[#555] max-w-xl text-lg" data-i18n="about_desc">Ember Sports is dedicated to promoting pickleball in Shanghai — from beginners to competitive players, this is your home court.</p>
         <div class="grid md:grid-cols-2 gap-16 mt-16 items-center">
             <div class="space-y-6">
                 <div class="flex gap-4 items-start">
                     <div class="w-11 h-11 bg-[#FFF4EE] rounded-xl flex items-center justify-center text-2xl flex-shrink-0">🏓</div>
-                    <div><h4 class="font-bold text-base mb-1">8 Professional Courts</h4><p class="text-sm text-[#555] leading-relaxed">比赛级地面，配备专业球网和标准划线，始终保持最佳状态。</p></div>
+                    <div><h4 class="font-bold text-base mb-1" data-i18n="about_feature1_title">8 Professional Courts</h4><p class="text-sm text-[#555] leading-relaxed" data-i18n="about_feature1_desc">Competition-grade surfaces with professional nets, standard court markings, always kept in top condition.</p></div>
                 </div>
                 <div class="flex gap-4 items-start">
                     <div class="w-11 h-11 bg-[#FFF4EE] rounded-xl flex items-center justify-center text-2xl flex-shrink-0">💡</div>
-                    <div><h4 class="font-bold text-base mb-1">Full LED Lighting</h4><p class="text-sm text-[#555] leading-relaxed">从清晨到深夜，体育场级照明设计有效减少眼部疲劳。</p></div>
+                    <div><h4 class="font-bold text-base mb-1" data-i18n="about_feature2_title">Full LED Lighting</h4><p class="text-sm text-[#555] leading-relaxed" data-i18n="about_feature2_desc">From early morning to late night, stadium-grade lighting designed to reduce eye fatigue.</p></div>
                 </div>
                 <div class="flex gap-4 items-start">
                     <div class="w-11 h-11 bg-[#FFF4EE] rounded-xl flex items-center justify-center text-2xl flex-shrink-0">🎯</div>
-                    <div><h4 class="font-bold text-base mb-1">All Skill Levels Welcome</h4><p class="text-sm text-[#555] leading-relaxed">无论您是第一次拿起球拍，还是参加联赛的竞技选手，合拍社都欢迎您。</p></div>
+                    <div><h4 class="font-bold text-base mb-1" data-i18n="about_feature3_title">All Skill Levels Welcome</h4><p class="text-sm text-[#555] leading-relaxed" data-i18n="about_feature3_desc">Whether you're picking up a paddle for the first time or competing in leagues, Ember Sports welcomes you.</p></div>
                 </div>
                 <div class="flex gap-4 items-start">
                     <div class="w-11 h-11 bg-[#FFF4EE] rounded-xl flex items-center justify-center text-2xl flex-shrink-0">📍</div>
-                    <div><h4 class="font-bold text-base mb-1">Central Shanghai Location</h4><p class="text-sm text-[#555] leading-relaxed">交通便利，地铁直达，提供 onsite 停车位和舒适的休息区。</p></div>
+                    <div><h4 class="font-bold text-base mb-1" data-i18n="about_feature4_title">Central Shanghai Location</h4><p class="text-sm text-[#555] leading-relaxed" data-i18n="about_feature4_desc">Easy transit access, on-site parking, and a comfortable lounge area.</p></div>
                 </div>
             </div>
             <div class="bg-[#FFF4EE] rounded-3xl h-[400px] flex items-center justify-center p-8">
@@ -96,18 +126,18 @@
 <!-- Booking Section -->
 <section id="booking" class="py-24 px-4 sm:px-6 lg:px-8 bg-[#FFF4EE]">
     <div class="max-w-7xl mx-auto">
-        <span class="inline-block bg-[#F4611A]/10 text-[#F4611A] text-xs font-bold px-3 py-1 rounded-full mb-2 uppercase tracking-wider">Reservations</span>
-        <h2 class="text-3xl sm:text-4xl font-black tracking-tight mb-2">Book your court</h2>
-        <p class="text-slate-500 text-sm sm:text-base mb-8">Pick a date, then click any available slot to reserve it.</p>
+        <span class="inline-block bg-[#F4611A]/10 text-[#F4611A] text-xs font-bold px-3 py-1 rounded-full mb-2 uppercase tracking-wider" data-i18n="booking_badge">Reservations</span>
+        <h2 class="text-3xl sm:text-4xl font-black tracking-tight mb-2" data-i18n="booking_title">Book your court</h2>
+        <p class="text-slate-500 text-sm sm:text-base mb-8" data-i18n="booking_subtitle">Pick a date, then click any available slot to reserve it.</p>
         <div class="flex gap-2 mb-6 overflow-x-auto pb-2" id="datePicker"></div>
         <div class="flex gap-4 mb-4 text-xs text-slate-500">
-            <span class="flex items-center gap-1.5"><span class="w-3 h-3 bg-white border border-slate-200 rounded inline-block"></span> Available</span>
-            <span class="flex items-center gap-1.5"><span class="w-3 h-3 bg-slate-200 rounded inline-block"></span> Booked</span>
+            <span class="flex items-center gap-1.5"><span class="w-3 h-3 bg-white border border-slate-200 rounded inline-block"></span> <span data-i18n="booking_available">Available</span></span>
+            <span class="flex items-center gap-1.5"><span class="w-3 h-3 bg-slate-200 rounded inline-block"></span> <span data-i18n="booking_booked">Booked</span></span>
         </div>
         <div class="bg-white rounded-2xl p-4 sm:p-6 border border-slate-100 shadow-sm">
             <div id="bookingLoading" class="flex items-center justify-center py-16 text-slate-400">
                 <svg class="animate-spin w-6 h-6 mr-2 text-[#F4611A]" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg>
-                Loading courts...
+                <span data-i18n="booking_loading">Loading courts...</span>
             </div>
             <div id="bookingGrid" class="hidden overflow-x-auto"></div>
         </div>
@@ -117,7 +147,7 @@
 <!-- My Bookings Section -->
 <section id="myBookingsSection" class="py-24 px-4 sm:px-6 lg:px-8 bg-white hidden">
     <div class="max-w-4xl mx-auto">
-        <h2 class="text-3xl font-black tracking-tight mb-8">My Bookings</h2>
+        <h2 class="text-3xl font-black tracking-tight mb-8" data-i18n="myBookings_title">My Bookings</h2>
         <div id="myBookingsList"></div>
     </div>
 </section>
@@ -127,10 +157,10 @@
     <div class="max-w-7xl mx-auto grid md:grid-cols-3 gap-12 mb-12">
         <div>
             <div class="text-2xl font-black text-white tracking-tight" style="font-family:'Barlow Condensed',sans-serif;"><span class="text-[#F4611A]">Ember</span> Sports</div>
-            <p class="text-sm mt-3 leading-relaxed max-w-xs">Shanghai's premier pickleball facility. 8 professional courts, open daily from 7AM to 10PM.</p>
+            <p class="text-sm mt-3 leading-relaxed max-w-xs" data-i18n="footer_desc">Shanghai's premier pickleball facility. 8 professional courts, open daily from 7AM to 10PM.</p>
         </div>
         <div>
-            <h5 class="text-white text-xs font-bold uppercase tracking-wider mb-4">Contact</h5>
+            <h5 class="text-white text-xs font-bold uppercase tracking-wider mb-4" data-i18n="footer_contact">Contact</h5>
             <ul class="space-y-2 text-sm">
                 <li>📍 Shanghai, China</li>
                 <li>📞 +86 21 0000 0000</li>
@@ -138,7 +168,7 @@
             </ul>
         </div>
         <div>
-            <h5 class="text-white text-xs font-bold uppercase tracking-wider mb-4">Follow Us</h5>
+            <h5 class="text-white text-xs font-bold uppercase tracking-wider mb-4" data-i18n="footer_follow">Follow Us</h5>
             <div class="flex gap-3">
                 <a href="#" class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-[#F4611A] transition-colors text-sm font-bold">IG</a>
                 <a href="#" class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-[#F4611A] transition-colors text-sm font-bold">WC</a>
@@ -147,51 +177,51 @@
     </div>
     <div class="border-t border-[#222] pt-6 flex flex-col md:flex-row justify-between text-xs">
         <span>© 2026 Ember Sports. All rights reserved.</span>
-        <span>Privacy Policy · Terms of Service</span>
+        <span data-i18n="footer_legal">Privacy Policy · Terms of Service</span>
     </div>
 </footer>
 
 <!-- Booking Modal -->
-<div id="bookingModal" class="modal-overlay fixed inset-0 bg-black/50 items-center justify-center z-50 p-4" onclick="closeBookingModal()">
-    <div class="bg-white rounded-2xl p-6 w-full max-w-md" onclick="event.stopPropagation()">
+<div id="bookingModal" class="modal-overlay fixed inset-0 bg-black/50 items-end sm:items-center justify-center z-50 p-0 sm:p-4" onclick="closeBookingModal()">
+    <div class="bg-white rounded-t-2xl sm:rounded-2xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
         <div class="flex items-center justify-between mb-6">
-            <h2 class="text-xl font-bold">Confirm Booking</h2>
+            <h2 class="text-xl font-bold" data-i18n="modal_confirmTitle">Confirm Booking</h2>
             <button onclick="closeBookingModal()" class="p-2 hover:bg-slate-100 rounded-lg text-slate-400 text-2xl leading-none">&times;</button>
         </div>
         <div id="bookingDetails" class="space-y-3 mb-6"></div>
         <div id="guestFields" class="space-y-3 mb-6 hidden">
-            <p class="text-sm text-slate-500">No account? Enter your details below to book as a guest.</p>
-            <input type="text" id="guestName" placeholder="Your Name" class="w-full px-4 py-3 rounded-lg border border-slate-200 focus:border-[#F4611A] focus:ring-2 focus:ring-[#F4611A]/20 outline-none" />
-            <input type="tel" id="guestPhone" placeholder="Phone Number" class="w-full px-4 py-3 rounded-lg border border-slate-200 focus:border-[#F4611A] focus:ring-2 focus:ring-[#F4611A]/20 outline-none" />
+            <p class="text-sm text-slate-500" data-i18n="modal_guestHint">No account? Enter your details below to book as a guest.</p>
+            <input type="text" id="guestName" data-i18n-placeholder="modal_name" placeholder="Your Name" class="w-full px-4 py-3 rounded-lg border border-slate-200 focus:border-[#F4611A] focus:ring-2 focus:ring-[#F4611A]/20 outline-none" />
+            <input type="tel" id="guestPhone" data-i18n-placeholder="modal_phone" placeholder="Phone Number" class="w-full px-4 py-3 rounded-lg border border-slate-200 focus:border-[#F4611A] focus:ring-2 focus:ring-[#F4611A]/20 outline-none" />
         </div>
         <div id="bookingTotal" class="flex items-center justify-between mb-6 p-4 bg-slate-50 rounded-xl"></div>
         <div id="bookingError" class="hidden mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-lg"></div>
-        <button onclick="confirmBooking()" class="w-full py-3.5 bg-[#F4611A] text-white font-bold rounded-xl hover:bg-[#FF8C42] transition-colors text-base">Confirm Reservation</button>
+        <button onclick="confirmBooking()" class="w-full py-3.5 bg-[#F4611A] text-white font-bold rounded-xl hover:bg-[#FF8C42] transition-colors text-base" data-i18n="modal_confirmBtn">Confirm Reservation</button>
     </div>
 </div>
 
 <!-- Login Modal -->
-<div id="loginModal" class="modal-overlay fixed inset-0 bg-black/50 items-center justify-center z-50 p-4" onclick="closeLoginModal()">
-    <div class="bg-white rounded-2xl p-8 w-full max-w-md" onclick="event.stopPropagation()">
+<div id="loginModal" class="modal-overlay fixed inset-0 bg-black/50 items-end sm:items-center justify-center z-50 p-0 sm:p-4" onclick="closeLoginModal()">
+    <div class="bg-white rounded-t-2xl sm:rounded-2xl p-6 sm:p-8 w-full max-w-md max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
         <div class="flex items-center justify-between mb-6">
-            <h2 class="text-xl font-bold" id="loginModalTitle">Log In</h2>
+            <h2 class="text-xl font-bold" id="loginModalTitle" data-i18n="login_title">Log In</h2>
             <button onclick="closeLoginModal()" class="p-2 hover:bg-slate-100 rounded-lg text-slate-400 text-2xl leading-none">&times;</button>
         </div>
         <div id="loginError" class="hidden mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-lg"></div>
         <div id="loginSuccess" class="hidden mb-4 p-3 bg-green-50 text-green-700 text-sm rounded-lg"></div>
         <form onsubmit="handleLogin(event)" class="space-y-4">
             <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1">Email</label>
+                <label class="block text-sm font-medium text-slate-700 mb-1" data-i18n="login_email">Email</label>
                 <input type="email" id="loginEmail" placeholder="your@email.com" required class="w-full px-4 py-3 rounded-lg border border-slate-200 focus:border-[#F4611A] focus:ring-2 focus:ring-[#F4611A]/20 outline-none" />
             </div>
             <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1">Password</label>
+                <label class="block text-sm font-medium text-slate-700 mb-1" data-i18n="login_password">Password</label>
                 <input type="password" id="loginPassword" placeholder="••••••••" required class="w-full px-4 py-3 rounded-lg border border-slate-200 focus:border-[#F4611A] focus:ring-2 focus:ring-[#F4611A]/20 outline-none" />
             </div>
-            <button type="submit" id="loginSubmitBtn" class="w-full py-3 bg-[#F4611A] text-white font-bold rounded-lg hover:bg-[#FF8C42] transition-colors">Log In</button>
+            <button type="submit" id="loginSubmitBtn" class="w-full py-3 bg-[#F4611A] text-white font-bold rounded-lg hover:bg-[#FF8C42] transition-colors" data-i18n="login_submit">Log In</button>
         </form>
         <div class="mt-4 text-center">
-            <button onclick="toggleAuthMode()" class="text-sm text-[#F4611A] hover:underline" id="toggleAuthBtn">Don't have an account? Register</button>
+            <button onclick="toggleAuthMode()" class="text-sm text-[#F4611A] hover:underline" id="toggleAuthBtn" data-i18n="login_toggleRegister">Don't have an account? Register</button>
         </div>
     </div>
 </div>
@@ -203,6 +233,188 @@ const sb = createClient(
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNqcmlucXNla293aGd0aWtobnZ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzODY5NTMsImV4cCI6MjA5MTk2Mjk1M30.qeGOQF6G3YOs_LSiSFBC0cGNWU_pVYWrJ50YDciDGj8'
 );
 
+// ===== i18n for static page =====
+const STORAGE_KEY = 'ember_sports_lang';
+const i18nTexts = {
+  en: {
+    nav_book: 'Book',
+    nav_myBookings: 'My Bookings',
+    nav_login: 'Log In',
+    nav_logout: 'Log Out',
+    hero_badge: "Shanghai's Premier Pickleball Venue",
+    hero_title1: 'Play Hard.',
+    hero_title2: 'Play Ember.',
+    hero_desc: '8 professional pickleball courts in central Shanghai. Built for those who take their game seriously.',
+    hero_cta: 'Book a Court',
+    hero_learnMore: 'Learn More',
+    hero_courts: 'Pickleball Courts',
+    hero_opens: 'Opens Daily',
+    hero_closes: 'Closes Daily',
+    about_badge: 'About Us',
+    about_title: "Shanghai's home for pickleball",
+    about_desc: 'Ember Sports is dedicated to promoting pickleball in Shanghai — from beginners to competitive players, this is your home court.',
+    about_feature1_title: '8 Professional Courts',
+    about_feature1_desc: 'Competition-grade surfaces with professional nets, standard court markings, always kept in top condition.',
+    about_feature2_title: 'Full LED Lighting',
+    about_feature2_desc: 'From early morning to late night, stadium-grade lighting designed to reduce eye fatigue.',
+    about_feature3_title: 'All Skill Levels Welcome',
+    about_feature3_desc: "Whether you're picking up a paddle for the first time or competing in leagues, Ember Sports welcomes you.",
+    about_feature4_title: 'Central Shanghai Location',
+    about_feature4_desc: 'Easy transit access, on-site parking, and a comfortable lounge area.',
+    booking_badge: 'Reservations',
+    booking_title: 'Book your court',
+    booking_subtitle: 'Pick a date, then click any available slot to reserve it.',
+    booking_available: 'Available',
+    booking_booked: 'Booked',
+    booking_loading: 'Loading courts...',
+    booking_noCourts: 'No courts available. Please try again later.',
+    booking_open: 'Open',
+    booking_courtHeader: 'Court',
+    myBookings_title: 'My Bookings',
+    myBookings_empty: 'No bookings yet.',
+    myBookings_bookCourt: 'Book a court',
+    myBookings_cancelled: 'Cancelled',
+    myBookings_paid: 'Paid',
+    myBookings_pending: 'Pending',
+    myBookings_cancel: 'Cancel',
+    myBookings_cancelConfirm: 'Cancel this booking?',
+    footer_desc: "Shanghai's premier pickleball facility. 8 professional courts, open daily from 7AM to 10PM.",
+    footer_contact: 'Contact',
+    footer_follow: 'Follow Us',
+    footer_legal: 'Privacy Policy · Terms of Service',
+    modal_confirmTitle: 'Confirm Booking',
+    modal_guestHint: 'No account? Enter your details below to book as a guest.',
+    modal_name: 'Your Name',
+    modal_phone: 'Phone Number',
+    modal_total: 'Total (1 hour)',
+    modal_confirmBtn: 'Confirm Reservation',
+    modal_booking: 'Booking...',
+    modal_errorNamePhone: 'Please enter your name and phone number.',
+    modal_errorPhone: 'Please enter a valid phone number (7-20 digits, may include +, spaces, dashes, parentheses).',
+    modal_errorBooking: 'Booking failed. Please try again.',
+    modal_booked: 'Booked!',
+    login_title: 'Log In',
+    login_createAccount: 'Create Account',
+    login_email: 'Email',
+    login_password: 'Password',
+    login_submit: 'Log In',
+    login_register: 'Register',
+    login_pleaseWait: 'Please wait...',
+    login_toggleRegister: "Don't have an account? Register",
+    login_toggleLogin: 'Already have an account? Log In',
+    login_registered: 'Registered! Check your email to confirm, then log in.',
+    login_errorLoadCourts: 'Failed to load courts. Please refresh the page.',
+    login_errorLoadBookings: 'Failed to load bookings. Please try again.'
+  },
+  zh: {
+    nav_book: '预订',
+    nav_myBookings: '我的预订',
+    nav_login: '登录',
+    nav_logout: '退出',
+    hero_badge: '上海首选匹克球场地',
+    hero_title1: '尽情挥拍。',
+    hero_title2: '尽在合拍社。',
+    hero_desc: '上海市中心 8 片专业匹克球场。为认真对待运动的您打造。',
+    hero_cta: '立即预订',
+    hero_learnMore: '了解更多',
+    hero_courts: '匹克球场地',
+    hero_opens: '每日开放',
+    hero_closes: '每日营业至',
+    about_badge: '关于我们',
+    about_title: '上海匹克球主场',
+    about_desc: '合拍社致力于在上海推广匹克球运动——从初学者到竞技选手，这里都是您的主场。',
+    about_feature1_title: '8 片专业场地',
+    about_feature1_desc: '比赛级地面，配备专业球网和标准划线，始终保持最佳状态。',
+    about_feature2_title: '全场 LED 照明',
+    about_feature2_desc: '从清晨到深夜，体育场级照明设计有效减少眼部疲劳。',
+    about_feature3_title: '欢迎所有水平',
+    about_feature3_desc: '无论您是第一次拿起球拍，还是参加联赛的竞技选手，合拍社都欢迎您。',
+    about_feature4_title: '上海市中心位置',
+    about_feature4_desc: '交通便利，地铁直达，提供停车位和舒适的休息区。',
+    booking_badge: '预订场地',
+    booking_title: '预订场地',
+    booking_subtitle: '选择日期，点击空闲时段即可预订。',
+    booking_available: '空闲',
+    booking_booked: '已订',
+    booking_loading: '加载场地中...',
+    booking_noCourts: '暂无可用场地，请稍后重试。',
+    booking_open: '空闲',
+    booking_courtHeader: '场地',
+    myBookings_title: '我的预订',
+    myBookings_empty: '暂无预订记录。',
+    myBookings_bookCourt: '预订场地',
+    myBookings_cancelled: '已取消',
+    myBookings_paid: '已支付',
+    myBookings_pending: '待支付',
+    myBookings_cancel: '取消',
+    myBookings_cancelConfirm: '确定要取消此预订吗？',
+    footer_desc: '上海首选匹克球场地。8 片专业场地，每日 7AM - 10PM 营业。',
+    footer_contact: '联系我们',
+    footer_follow: '关注我们',
+    footer_legal: '隐私政策 · 服务条款',
+    modal_confirmTitle: '确认预订',
+    modal_guestHint: '没有账户？请输入以下信息以访客身份预订。',
+    modal_name: '您的姓名',
+    modal_phone: '联系电话',
+    modal_total: '总计（1小时）',
+    modal_confirmBtn: '确认预订',
+    modal_booking: '预订中...',
+    modal_errorNamePhone: '请输入您的姓名和联系电话。',
+    modal_errorPhone: '请输入有效的电话号码（7-20位数字，可包含+、空格、横杠、括号）。',
+    modal_errorBooking: '预订失败，请重试。',
+    modal_booked: '预订成功！',
+    login_title: '登录',
+    login_createAccount: '创建账户',
+    login_email: '邮箱',
+    login_password: '密码',
+    login_submit: '登录',
+    login_register: '注册',
+    login_pleaseWait: '请稍候...',
+    login_toggleRegister: '没有账户？立即注册',
+    login_toggleLogin: '已有账户？立即登录',
+    login_registered: '注册成功！请查收邮件确认后登录。',
+    login_errorLoadCourts: '加载场地失败，请刷新页面。',
+    login_errorLoadBookings: '加载预订失败，请重试。'
+  }
+};
+
+let currentLang = 'en';
+
+function getSavedLang() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved === 'zh' || saved === 'en') return saved;
+  } catch {}
+  return 'en';
+}
+
+function applyLang(lang) {
+  currentLang = lang;
+  const texts = i18nTexts[lang];
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (texts[key] !== undefined) el.textContent = texts[key];
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-i18n-placeholder');
+    if (texts[key] !== undefined) el.placeholder = texts[key];
+  });
+  // Update active lang button
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+  });
+  document.documentElement.lang = lang;
+  try { localStorage.setItem(STORAGE_KEY, lang); } catch {}
+}
+
+function switchLang(lang) {
+  applyLang(lang);
+  // Re-render dynamic content that depends on language
+  renderGrid();
+  if (currentUser) loadMyBookings();
+}
+
+// ===== App State =====
 let currentUser = null;
 let courts = [];
 let bookings = [];
@@ -212,7 +424,32 @@ let authMode = 'login';
 
 const timeSlots = ['08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00','21:00','22:00'];
 
+function t(key) {
+  return i18nTexts[currentLang][key] || i18nTexts['en'][key] || key;
+}
+
+function sanitizeInput(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML.trim();
+}
+
+function showError(msg) {
+  const el = document.getElementById('bookingError');
+  if (el) { el.textContent = msg; el.classList.remove('hidden'); }
+  else { alert(msg); }
+}
+
+function isPastTimeSlot(time) {
+  const now = new Date();
+  if (selectedDate.toDateString() !== now.toDateString()) return false;
+  const slotHour = parseInt(time.split(':')[0], 10);
+  return slotHour < now.getHours();
+}
+
 async function init() {
+  // Apply saved language preference
+  applyLang(getSavedLang());
   const { data: { session } } = await sb.auth.getSession();
   currentUser = session?.user || null;
   updateAuthUI();
@@ -227,19 +464,34 @@ sb.auth.onAuthStateChange((event, session) => {
   if (currentUser) loadMyBookings();
 });
 
+function toggleMobileMenu() {
+  const menu = document.getElementById('mobileMenu');
+  const hamburgerIcon = document.getElementById('hamburgerIcon');
+  const closeIcon = document.getElementById('closeIcon');
+  menu.classList.toggle('hidden');
+  hamburgerIcon.classList.toggle('hidden');
+  closeIcon.classList.toggle('hidden');
+}
+
 function updateAuthUI() {
   const btn = document.getElementById('authBtn');
   const myBtn = document.getElementById('myBookingsBtn');
   const mySection = document.getElementById('myBookingsSection');
+  const mobileAuthBtn = document.getElementById('mobileAuthBtn');
+  const mobileMyBookingsBtn = document.getElementById('mobileMyBookingsBtn');
   if (currentUser) {
-    btn.textContent = 'Log Out';
+    btn.textContent = t('nav_logout');
     myBtn.classList.remove('hidden');
     mySection.classList.remove('hidden');
+    if (mobileAuthBtn) mobileAuthBtn.textContent = t('nav_logout');
+    if (mobileMyBookingsBtn) mobileMyBookingsBtn.classList.remove('hidden');
     loadMyBookings();
   } else {
-    btn.textContent = 'Log In';
+    btn.textContent = t('nav_login');
     myBtn.classList.add('hidden');
     mySection.classList.add('hidden');
+    if (mobileAuthBtn) mobileAuthBtn.textContent = t('nav_login');
+    if (mobileMyBookingsBtn) mobileMyBookingsBtn.classList.add('hidden');
   }
 }
 
@@ -254,7 +506,9 @@ document.getElementById('myBookingsBtn').addEventListener('click', () => {
 function buildDatePicker() {
   const container = document.getElementById('datePicker');
   container.innerHTML = '';
-  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const daysEN = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const daysZH = ['日','一','二','三','四','五','六'];
+  const days = currentLang === 'zh' ? daysZH : daysEN;
   for (let i = 0; i < 7; i++) {
     const d = new Date();
     d.setDate(d.getDate() + i);
@@ -269,7 +523,12 @@ function buildDatePicker() {
 }
 
 async function loadCourts() {
-  const { data } = await sb.from('courts').select('*').eq('is_active', true).order('name');
+  const { data, error } = await sb.from('courts').select('*').eq('is_active', true).order('name');
+  if (error) {
+    showError(t('login_errorLoadCourts'));
+    console.error('loadCourts error:', error);
+    return;
+  }
   if (data) courts = data;
 }
 
@@ -277,13 +536,19 @@ async function loadBookings() {
   document.getElementById('bookingLoading').classList.remove('hidden');
   document.getElementById('bookingGrid').classList.add('hidden');
   const dateStr = fmtDate(selectedDate);
-  const { data } = await sb.from('bookings').select('*').eq('booking_date', dateStr).in('status', ['confirmed','pending']);
-  bookings = data || [];
+  const { data, error } = await sb.from('bookings').select('*').eq('booking_date', dateStr).in('status', ['confirmed','pending']);
+  if (error) {
+    showError(t('login_errorLoadBookings'));
+    console.error('loadBookings error:', error);
+    bookings = [];
+  } else {
+    bookings = data || [];
+  }
   renderGrid();
 }
 
 function isBooked(courtId, time) {
-  const t = time + ':00';
+  const t = `${time}:00`;
   return bookings.some(b => b.court_id === courtId && b.start_time <= t && b.end_time > t);
 }
 
@@ -291,8 +556,12 @@ function renderGrid() {
   document.getElementById('bookingLoading').classList.add('hidden');
   const grid = document.getElementById('bookingGrid');
   grid.classList.remove('hidden');
+  if (!courts || courts.length === 0) {
+    grid.innerHTML = `<div class="text-center py-16 text-slate-400 text-sm">${t('booking_noCourts')}</div>`;
+    return;
+  }
   let html = `<table class="w-full min-w-[1000px] border-collapse text-sm"><thead><tr>
-    <th class="p-3 text-left text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 bg-white sticky left-0 z-10 min-w-[120px]">Court</th>`;
+    <th class="p-3 text-left text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 bg-white sticky left-0 z-10 min-w-[120px]">${t('booking_courtHeader')}</th>`;
   for (const t of timeSlots) {
     html += `<th class="p-3 text-center text-xs font-bold text-slate-400 border-b border-slate-100 whitespace-nowrap">${t}</th>`;
   }
@@ -305,10 +574,13 @@ function renderGrid() {
       </td>`;
     for (const time of timeSlots) {
       const booked = isBooked(court.id, time);
-      if (booked) {
-        html += `<td class="border border-slate-100"><div class="h-12 bg-slate-100 flex items-center justify-center text-xs text-slate-400">Booked</div></td>`;
+      const past = isPastTimeSlot(time);
+      if (past) {
+        html += `<td class="border border-slate-100"><div class="h-12 bg-slate-50 flex items-center justify-center text-xs text-slate-300">-</div></td>`;
+      } else if (booked) {
+        html += `<td class="border border-slate-100"><div class="h-12 bg-slate-100 flex items-center justify-center text-xs text-slate-400">${t('booking_booked')}</div></td>`;
       } else {
-        html += `<td class="border border-slate-100 cursor-pointer hover:bg-[#FFF4EE] transition-colors" onclick="handleSlotClick('${court.id}','${time}')"><div class="h-12 flex items-center justify-center text-xs text-[#F4611A] font-semibold">Open</div></td>`;
+        html += `<td class="border border-slate-100 cursor-pointer hover:bg-[#FFF4EE] transition-colors" onclick="handleSlotClick('${court.id}','${time}')"><div class="h-12 flex items-center justify-center text-xs text-[#F4611A] font-semibold">${t('booking_open')}</div></td>`;
       }
     }
     html += `</tr>`;
@@ -336,7 +608,7 @@ function openBookingModal() {
       <span class="text-xl">📅</span>
       <div><div class="font-semibold text-[#111]">${fmtDateDisplay(selectedDate)}</div><div class="text-sm text-slate-400">${time} – ${endH}:00</div></div>
     </div>`;
-  document.getElementById('bookingTotal').innerHTML = `<span class="text-slate-600 font-medium">Total (1 hour)</span><span class="text-2xl font-black text-[#F4611A]">¥${court.price_per_hour}</span>`;
+  document.getElementById('bookingTotal').innerHTML = `<span class="text-slate-600 font-medium">${t('modal_total')}</span><span class="text-2xl font-black text-[#F4611A]">¥${court.price_per_hour}</span>`;
   document.getElementById('guestFields').classList.toggle('hidden', !!currentUser);
   document.getElementById('bookingError').classList.add('hidden');
   document.getElementById('guestName').value = '';
@@ -351,37 +623,54 @@ function closeBookingModal() {
 
 async function confirmBooking() {
   if (!selectedSlot) return;
-  const { court, time } = selectedSlot;
-  const endH = (parseInt(time.split(':')[0]) + 1).toString().padStart(2, '0');
-  const guestName = document.getElementById('guestName').value.trim();
-  const guestPhone = document.getElementById('guestPhone').value.trim();
-  if (!currentUser && (!guestName || !guestPhone)) {
-    showBookingError('Please enter your name and phone number.');
-    return;
-  }
   const btn = document.querySelector('#bookingModal button[onclick="confirmBooking()"]');
-  btn.textContent = 'Booking...';
+  if (btn.disabled) return; // Already processing
   btn.disabled = true;
-  const { error } = await sb.from('bookings').insert({
-    court_id: court.id,
-    booking_date: fmtDate(selectedDate),
-    start_time: time + ':00',
-    end_time: endH + ':00:00',
-    user_id: currentUser?.id || null,
-    guest_name: guestName || null,
-    guest_phone: guestPhone || null,
-    total_amount: court.price_per_hour,
-    status: 'pending'
-  });
-  btn.textContent = 'Confirm Reservation';
-  btn.disabled = false;
-  if (error) {
-    showBookingError('Booking failed. Please try again.');
-  } else {
-    closeBookingModal();
-    await loadBookings();
-    if (currentUser) loadMyBookings();
-    alert(`Booked! ${court.name} on ${fmtDateDisplay(selectedDate)} at ${time}.`);
+  btn.textContent = t('modal_booking');
+  let errorOccurred = false;
+  try {
+    const { court, time } = selectedSlot;
+    const endH = (parseInt(time.split(':')[0], 10) + 1).toString().padStart(2, '0');
+    let guestName = sanitizeInput(document.getElementById('guestName').value);
+    let guestPhone = sanitizeInput(document.getElementById('guestPhone').value);
+    if (!currentUser && (!guestName || !guestPhone)) {
+      errorOccurred = true;
+      showBookingError(t('modal_errorNamePhone'));
+      return;
+    }
+    if (!currentUser && guestPhone && !/^[+0-9\s()-]{7,20}$/.test(guestPhone)) {
+      errorOccurred = true;
+      showBookingError(t('modal_errorPhone'));
+      return;
+    }
+    const { error } = await sb.from('bookings').insert({
+      court_id: court.id,
+      booking_date: fmtDate(selectedDate),
+      start_time: `${time}:00`,
+      end_time: `${endH}:00:00`,
+      user_id: currentUser?.id || null,
+      guest_name: guestName || null,
+      guest_phone: guestPhone || null,
+      total_amount: court.price_per_hour,
+      status: 'pending'
+    });
+    if (error) {
+      errorOccurred = true;
+      showBookingError(error.message || t('modal_errorBooking'));
+    } else {
+      closeBookingModal();
+      await loadBookings();
+      if (currentUser) loadMyBookings();
+      alert(`${t('modal_booked')} ${court.name} on ${fmtDateDisplay(selectedDate)} at ${time}.`);
+    }
+  } catch (err) {
+    errorOccurred = true;
+    showBookingError(err.message || t('modal_errorBooking'));
+  } finally {
+    if (errorOccurred) {
+      btn.disabled = false;
+      btn.textContent = t('modal_confirmBtn');
+    }
   }
 }
 
@@ -396,14 +685,14 @@ async function loadMyBookings() {
   const { data } = await sb.from('bookings').select('*, court:courts(name, description)').eq('user_id', currentUser.id).order('booking_date', { ascending: false });
   const list = document.getElementById('myBookingsList');
   if (!data || data.length === 0) {
-    list.innerHTML = `<div class="text-center py-16 bg-slate-50 rounded-2xl text-slate-400 text-sm">No bookings yet. <a href="#booking" class="text-[#F4611A] hover:underline">Book a court</a></div>`;
+    list.innerHTML = `<div class="text-center py-16 bg-slate-50 rounded-2xl text-slate-400 text-sm">${t('myBookings_empty')} <a href="#booking" class="text-[#F4611A] hover:underline">${t('myBookings_bookCourt')}</a></div>`;
     return;
   }
   list.innerHTML = data.map(b => {
     const isCancelled = b.status === 'cancelled';
     const isPaid = b.payment_status === 'paid';
     const statusCls = isCancelled ? 'bg-slate-100 text-slate-500' : isPaid ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-600';
-    const statusText = isCancelled ? 'Cancelled' : isPaid ? 'Paid' : 'Pending';
+    const statusText = isCancelled ? t('myBookings_cancelled') : isPaid ? t('myBookings_paid') : t('myBookings_pending');
     return `<div class="bg-white border border-slate-100 rounded-xl p-5 mb-3 shadow-sm">
       <div class="flex items-center justify-between mb-2">
         <span class="font-bold text-[#111]">${b.court?.name || 'Court'}</span>
@@ -412,14 +701,14 @@ async function loadMyBookings() {
       <div class="text-sm text-slate-400 mb-3">${b.booking_date} &nbsp;·&nbsp; ${b.start_time?.slice(0,5)} – ${b.end_time?.slice(0,5)}</div>
       <div class="flex items-center justify-between border-t border-slate-100 pt-3">
         <span class="font-bold text-[#F4611A]">¥${b.total_amount}</span>
-        ${!isCancelled && b.status !== 'completed' ? `<button onclick="cancelBooking('${b.id}')" class="text-sm text-red-400 hover:text-red-600 transition-colors">Cancel</button>` : ''}
+        ${!isCancelled && b.status !== 'completed' ? `<button onclick="cancelBooking('${b.id}')" class="text-sm text-red-400 hover:text-red-600 transition-colors">${t('myBookings_cancel')}</button>` : ''}
       </div>
     </div>`;
   }).join('');
 }
 
 async function cancelBooking(id) {
-  if (!confirm('Cancel this booking?')) return;
+  if (!confirm(t('myBookings_cancelConfirm'))) return;
   await sb.from('bookings').update({ status: 'cancelled' }).eq('id', id);
   loadMyBookings();
   loadBookings();
@@ -431,6 +720,11 @@ function openLoginModal() {
   document.getElementById('loginSuccess').classList.add('hidden');
   document.getElementById('loginEmail').value = '';
   document.getElementById('loginPassword').value = '';
+  // Reset auth mode text
+  authMode = 'login';
+  document.getElementById('loginModalTitle').textContent = t('login_title');
+  document.getElementById('loginSubmitBtn').textContent = t('login_submit');
+  document.getElementById('toggleAuthBtn').textContent = t('login_toggleRegister');
 }
 
 function closeLoginModal() {
@@ -440,9 +734,9 @@ function closeLoginModal() {
 function toggleAuthMode() {
   authMode = authMode === 'login' ? 'register' : 'login';
   const isLogin = authMode === 'login';
-  document.getElementById('loginModalTitle').textContent = isLogin ? 'Log In' : 'Create Account';
-  document.getElementById('loginSubmitBtn').textContent = isLogin ? 'Log In' : 'Register';
-  document.getElementById('toggleAuthBtn').textContent = isLogin ? "Don't have an account? Register" : 'Already have an account? Log In';
+  document.getElementById('loginModalTitle').textContent = isLogin ? t('login_title') : t('login_createAccount');
+  document.getElementById('loginSubmitBtn').textContent = isLogin ? t('login_submit') : t('login_register');
+  document.getElementById('toggleAuthBtn').textContent = isLogin ? t('login_toggleRegister') : t('login_toggleLogin');
   document.getElementById('loginError').classList.add('hidden');
   document.getElementById('loginSuccess').classList.add('hidden');
 }
@@ -453,7 +747,7 @@ async function handleLogin(e) {
   const password = document.getElementById('loginPassword').value;
   const btn = document.getElementById('loginSubmitBtn');
   btn.disabled = true;
-  btn.textContent = 'Please wait...';
+  btn.textContent = t('login_pleaseWait');
   document.getElementById('loginError').classList.add('hidden');
   document.getElementById('loginSuccess').classList.add('hidden');
   let error;
@@ -464,12 +758,12 @@ async function handleLogin(e) {
     ({ error } = await sb.auth.signUp({ email, password }));
     if (!error) {
       const s = document.getElementById('loginSuccess');
-      s.textContent = 'Registered! Check your email to confirm, then log in.';
+      s.textContent = t('login_registered');
       s.classList.remove('hidden');
       authMode = 'login';
-      document.getElementById('loginModalTitle').textContent = 'Log In';
-      document.getElementById('loginSubmitBtn').textContent = 'Log In';
-      document.getElementById('toggleAuthBtn').textContent = "Don't have an account? Register";
+      document.getElementById('loginModalTitle').textContent = t('login_title');
+      document.getElementById('loginSubmitBtn').textContent = t('login_submit');
+      document.getElementById('toggleAuthBtn').textContent = t('login_toggleRegister');
     }
   }
   if (error) {
@@ -478,17 +772,21 @@ async function handleLogin(e) {
     el.classList.remove('hidden');
   }
   btn.disabled = false;
-  btn.textContent = authMode === 'login' ? 'Log In' : 'Register';
+  btn.textContent = authMode === 'login' ? t('login_submit') : t('login_register');
 }
 
 function fmtDate(d) {
   return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
 }
 function fmtDateDisplay(d) {
-  return d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric', year:'numeric' });
+  const locale = currentLang === 'zh' ? 'zh-CN' : 'en-US';
+  return d.toLocaleDateString(locale, { weekday:'short', month:'short', day:'numeric', year:'numeric' });
 }
 
-init();
+init().catch(err => console.error('Init failed:', err));
+window.addEventListener('unhandledrejection', (event) => {
+  console.error('Unhandled promise rejection:', event.reason);
+});
 </script>
 </body>
 </html>

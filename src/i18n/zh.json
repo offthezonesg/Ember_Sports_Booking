@@ -1,8 +1,6 @@
 {
-  "brand": {
-    "name": "Ember Sports",
-    "subtitle": "匹克球"
-  },
+  "brand": "合拍社",
+  "brandShort": "合拍社",
   "nav": {
     "home": "首页",
     "booking": "预订场地",
@@ -10,67 +8,51 @@
     "login": "登录",
     "logout": "退出"
   },
-  "home": {
-    "hero": {
-      "title": "Ember Sports 匹克球",
-      "subtitle": "专业匹克球场馆运营，为您提供优质的运动体验",
-      "cta": "立即预订"
+  "hero": {
+    "title": "合拍社匹克球",
+    "subtitle": "专业匹克球场馆运营，为您提供优质的运动体验",
+    "cta": "立即预订"
+  },
+  "features": {
+    "courts": {
+      "title": "优质场地",
+      "desc": "8个专业匹克球场地，配备专业灯光和设施"
     },
-    "features": {
-      "quality": {
-        "title": "优质场地",
-        "desc": "8个专业匹克球场地，配备专业灯光和设施"
-      },
-      "flexible": {
-        "title": "灵活预订",
-        "desc": "支持按小时预订，随时查看场地空闲情况"
-      },
-      "secure": {
-        "title": "安全支付",
-        "desc": "在线支付，预订确认后立即锁定场地"
-      }
+    "flexible": {
+      "title": "灵活预订",
+      "desc": "支持按小时预订，随时查看场地空闲情况"
     },
-    "pricing": {
-      "title": "场地价格",
-      "subtitle": "透明定价，按需选择",
-      "standard": {
-        "name": "标准场地",
-        "desc": "A-D场"
-      },
-      "vip": {
-        "name": "VIP场地",
-        "desc": "E-F场，配备空调"
-      },
-      "training": {
-        "name": "训练场地",
-        "desc": "G-H场，适合初学者"
-      },
-      "perHour": "/小时"
+    "secure": {
+      "title": "安全支付",
+      "desc": "在线支付，预订确认后立即锁定场地"
     }
+  },
+  "pricing": {
+    "title": "场地价格",
+    "subtitle": "透明定价，按需选择",
+    "standard": "标准场地",
+    "vip": "VIP场地",
+    "training": "训练场地",
+    "perHour": "/小时",
+    "standardDesc": "A-D场",
+    "vipDesc": "E-F场",
+    "trainingDesc": "G-H场"
   },
   "booking": {
     "title": "场地预订",
     "court": "场地",
-    "price": "价格",
     "available": "空闲",
     "booked": "已订",
-    "confirm": {
-      "title": "确认预订",
-      "date": "日期",
-      "time": "时间",
-      "total": "总计",
-      "name": "您的姓名",
-      "phone": "联系电话",
-      "submit": "确认预订"
-    },
     "confirmTitle": "确认预订",
+    "confirm": "确认预订",
+    "total": "总计",
     "name": "您的姓名",
     "phone": "联系电话",
     "email": "邮箱（选填）",
-    "total": "总计",
+    "success": "预订成功！",
+    "error": "预订失败，请重试。",
     "proceedToPay": "前往支付",
     "processing": "处理中...",
-    "error": "预订失败，请重试。",
     "payment": {
       "title": "支付",
       "confirmPay": "确认支付"
@@ -89,36 +71,63 @@
   "myBookings": {
     "title": "我的预订",
     "empty": "暂无预订记录",
+    "cancel": "取消",
+    "cancelConfirm": "确定要取消此预订吗？",
     "status": {
-      "pending": "待支付",
       "paid": "已支付",
+      "pending": "待支付",
       "cancelled": "已取消",
       "mockPaid": "测试支付"
-    },
-    "cancel": "取消"
+    }
   },
   "login": {
-    "welcome": "欢迎回来",
-    "create": "创建账户",
-    "subtitle": {
-      "login": "登录以管理您的预订",
-      "register": "注册以开始预订场地"
-    },
+    "title": "欢迎回来",
+    "subtitle": "登录以管理您的预订",
+    "registerTitle": "创建账户",
+    "registerSubtitle": "注册以开始预订场地",
     "email": "邮箱",
     "password": "密码",
-    "submit": {
-      "login": "登录",
-      "register": "注册"
-    },
-    "switch": {
-      "toRegister": "没有账户？立即注册",
-      "toLogin": "已有账户？立即登录"
-    },
-    "success": "注册成功，请登录"
+    "submit": "登录",
+    "register": "注册",
+    "noAccount": "没有账户？立即注册",
+    "hasAccount": "已有账户？立即登录",
+    "registerSuccess": "注册成功，请登录"
+  },
+  "onboarding": {
+    "title": "完善资料",
+    "subtitle": "设置您的昵称以开始预订场地",
+    "nickname": "昵称",
+    "nicknamePlaceholder": "请输入您的昵称",
+    "saving": "保存中...",
+    "getStarted": "开始使用",
+    "hint": "完成资料后，您将可以预订场地",
+    "errorLoadProfile": "加载资料失败，请刷新页面或稍后重试。",
+    "errorSaveProfile": "保存失败，请重试。",
+    "errorNicknameRequired": "请输入昵称",
+    "errorNicknameLength": "昵称至少需要2个字符"
+  },
+  "authCallback": {
+    "loading": "验证中...",
+    "success": "验证成功！",
+    "error": "验证失败",
+    "loadingMessage": "正在验证您的邮箱，请稍候...",
+    "successMessage": "即将跳转到资料完善页面...",
+    "errorMessage": "验证失败，请重试",
+    "backToLogin": "返回登录"
+  },
+  "errorBoundary": {
+    "title": "出了点问题",
+    "message": "请刷新页面重试。",
+    "refresh": "刷新页面"
   },
   "common": {
     "loading": "加载中...",
-    "error": "错误",
-    "close": "关闭"
+    "error": "出了点问题",
+    "retry": "重试",
+    "cancel": "取消",
+    "confirm": "确认",
+    "save": "保存",
+    "dismiss": "关闭",
+    "hour": "小时"
   }
 }

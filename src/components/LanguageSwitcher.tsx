@@ -1,5 +1,4 @@
 import React from 'react';
-import { Globe } from 'lucide-react';
 
 interface LanguageSwitcherProps {
   currentLang: 'zh' | 'en';
@@ -8,13 +7,28 @@ interface LanguageSwitcherProps {
 
 const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ currentLang, onSwitch }) => {
   return (
-    <button
-      onClick={() => onSwitch(currentLang === 'zh' ? 'en' : 'zh')}
-      className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-600 hover:text-primary transition-colors rounded-lg hover:bg-gray-100"
-    >
-      <Globe className="w-4 h-4" />
-      <span>{currentLang === 'zh' ? 'EN' : '中'}</span>
-    </button>
+    <div className="flex items-center bg-gray-100 rounded-full p-0.5">
+      <button
+        onClick={() => onSwitch('en')}
+        className={`px-2.5 py-1 text-xs font-semibold rounded-full transition-all ${
+          currentLang === 'en'
+            ? 'bg-white text-primary shadow-sm'
+            : 'text-gray-500 hover:text-gray-700'
+        }`}
+      >
+        EN
+      </button>
+      <button
+        onClick={() => onSwitch('zh')}
+        className={`px-2.5 py-1 text-xs font-semibold rounded-full transition-all ${
+          currentLang === 'zh'
+            ? 'bg-white text-primary shadow-sm'
+            : 'text-gray-500 hover:text-gray-700'
+        }`}
+      >
+        中文
+      </button>
+    </div>
   );
 };
 

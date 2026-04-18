@@ -3,10 +3,12 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { CheckCircle, XCircle, Loader2, ArrowLeft } from 'lucide-react';
 import { supabase } from '../supabase/client';
+import { useTranslation } from 'react-i18next';
 
 const AuthCallback: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { t } = useTranslation();
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [errorMessage, setErrorMessage] = useState<string>('');
 
@@ -45,12 +47,12 @@ const AuthCallback: React.FC = () => {
       } catch (error: any) {
         console.error('Auth callback error:', error);
         setStatus('error');
-        setErrorMessage(error.message || '验证失败，请重试');
+        setErrorMessage(error.message || t('authCallback.errorMessage'));
       }
     };
 
     handleAuthCallback();
-  }, [searchParams, navigate]);
+  }, [searchParams, navigate, t]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-white to-secondary/5 px-4">
@@ -91,14 +93,14 @@ const AuthCallback: React.FC = () => {
         )}
 
         <h2 className="text-2xl font-bold text-gray-900 mb-3">
-          {status === 'loading' && '验证中...'}
-          {status === 'success' && '✅ 验证成功！'}
-          {status === 'error' && '❌ 验证失败'}
+          {status === 'loading' && t('authCallback.loading')}
+          {status === 'success' && t('authCallback.success')}
+          {status === 'error' && t('authCallback.error')}
         </h2>
 
         <p className="text-gray-600 mb-6">
-          {status === 'loading' && '正在验证您的邮箱，请稍候...'}
-          {status === 'success' && '即将跳转到资料完善页面...'}
+          {status === 'loading' && t('authCallback.loadingMessage')}
+          {status === 'success' && t('authCallback.successMessage')}
           {status === 'error' && errorMessage}
         </p>
 
@@ -108,7 +110,7 @@ const AuthCallback: React.FC = () => {
             className="inline-flex items-center gap-2 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors font-medium"
           >
             <ArrowLeft className="w-4 h-4" />
-            返回登录
+            {t('authCallback.backToLogin')}
           </button>
         )}
       </motion.div>

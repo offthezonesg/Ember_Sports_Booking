@@ -1,5 +1,6 @@
 {
   "brand": "Ember Sports",
+  "brandShort": "Ember Sports",
   "nav": {
     "home": "Home",
     "booking": "Book a Court",
@@ -7,34 +8,35 @@
     "login": "Sign In",
     "logout": "Sign Out"
   },
-  "home": {
-    "hero": {
-      "title": "Ember Sports",
-      "subtitle": "Pickleball",
-      "description": "Professional pickleball court management, delivering a premium sports experience",
-      "cta": "Book Now"
+  "hero": {
+    "title": "Ember Sports Pickleball",
+    "subtitle": "Professional pickleball court operations, providing you with a premium sports experience",
+    "cta": "Book Now"
+  },
+  "features": {
+    "courts": {
+      "title": "Premium Courts",
+      "desc": "8 professional pickleball courts with professional lighting and facilities"
     },
-    "feature": {
-      "venue": {
-        "title": "Premium Courts",
-        "desc": "8 professional pickleball courts with professional lighting and facilities"
-      },
-      "booking": {
-        "title": "Flexible Booking",
-        "desc": "Book by the hour and check court availability anytime"
-      },
-      "payment": {
-        "title": "Secure Payment",
-        "desc": "Pay online and your court is locked immediately after confirmation"
-      }
+    "flexible": {
+      "title": "Flexible Booking",
+      "desc": "Book by the hour, check court availability anytime"
     },
-    "pricing": {
-      "title": "Court Pricing",
-      "subtitle": "Transparent pricing, choose what suits you",
-      "standard": "Standard Court",
-      "vip": "VIP Court",
-      "training": "Training Court"
+    "secure": {
+      "title": "Secure Payment",
+      "desc": "Online payment, court locked immediately after confirmation"
     }
+  },
+  "pricing": {
+    "title": "Court Pricing",
+    "subtitle": "Transparent pricing, choose as needed",
+    "standard": "Standard Court",
+    "vip": "VIP Court",
+    "training": "Training Court",
+    "perHour": "/hour",
+    "standardDesc": "Courts A-D",
+    "vipDesc": "Courts E-F",
+    "trainingDesc": "Courts G-H"
   },
   "booking": {
     "title": "Book a Court",
@@ -43,13 +45,14 @@
     "booked": "Booked",
     "confirmTitle": "Confirm Booking",
     "confirm": "Confirm Booking",
+    "total": "Total",
     "name": "Your Name",
     "phone": "Phone Number",
     "email": "Email (optional)",
-    "total": "Total",
+    "success": "Booking confirmed!",
+    "error": "Booking failed. Please try again.",
     "proceedToPay": "Proceed to Payment",
     "processing": "Processing...",
-    "error": "Failed to create booking. Please try again.",
     "payment": {
       "title": "Payment",
       "confirmPay": "Confirm Payment"
@@ -69,26 +72,62 @@
     "title": "My Bookings",
     "empty": "No bookings yet",
     "cancel": "Cancel",
+    "cancelConfirm": "Are you sure you want to cancel this booking?",
     "status": {
       "paid": "Paid",
-      "pending": "Pending Payment",
+      "pending": "Pending",
       "cancelled": "Cancelled",
       "mockPaid": "Test Paid"
     }
   },
   "login": {
-    "welcome": "Welcome Back",
-    "create": "Create Account",
+    "title": "Welcome Back",
+    "subtitle": "Sign in to manage your bookings",
+    "registerTitle": "Create Account",
+    "registerSubtitle": "Register to start booking courts",
     "email": "Email",
     "password": "Password",
     "submit": "Sign In",
     "register": "Sign Up",
-    "noAccount": "Don't have an account? Sign up",
-    "hasAccount": "Already have an account? Sign in"
+    "noAccount": "No account? Register now",
+    "hasAccount": "Already have an account? Sign in",
+    "registerSuccess": "Registration successful, please sign in"
+  },
+  "onboarding": {
+    "title": "Complete Your Profile",
+    "subtitle": "Set your nickname to start booking courts",
+    "nickname": "Nickname",
+    "nicknamePlaceholder": "Enter your nickname",
+    "saving": "Saving...",
+    "getStarted": "Get Started",
+    "hint": "After completing your profile, you'll be able to book courts",
+    "errorLoadProfile": "Failed to load profile. Please refresh the page or try again later.",
+    "errorSaveProfile": "Failed to save. Please try again.",
+    "errorNicknameRequired": "Please enter a nickname",
+    "errorNicknameLength": "Nickname must be at least 2 characters"
+  },
+  "authCallback": {
+    "loading": "Verifying...",
+    "success": "Verification Successful!",
+    "error": "Verification Failed",
+    "loadingMessage": "Verifying your email, please wait...",
+    "successMessage": "Redirecting to profile setup...",
+    "errorMessage": "Verification failed, please try again",
+    "backToLogin": "Return to Login"
+  },
+  "errorBoundary": {
+    "title": "Something went wrong",
+    "message": "Please refresh the page to try again.",
+    "refresh": "Refresh Page"
   },
   "common": {
-    "hour": "hour",
     "loading": "Loading...",
-    "close": "Close"
+    "error": "Something went wrong",
+    "retry": "Try Again",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "dismiss": "Dismiss",
+    "hour": "hour"
   }
 }

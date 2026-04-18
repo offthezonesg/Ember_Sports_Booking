@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, User, Home, Menu, X, Globe } from 'lucide-react';
+import { Calendar, User, Home, Menu, X } from 'lucide-react';
 import { supabase } from '../supabase/client';
 import { useTranslation } from '../hooks/useTranslation';
+import LanguageSwitcher from './LanguageSwitcher';
 
 interface HeaderProps {
   user: any;
@@ -20,10 +21,6 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
     { path: '/my-bookings', label: t('nav.myBookings'), icon: User },
   ];
 
-  const toggleLang = () => {
-    setLang(lang === 'en' ? 'zh' : 'en');
-  };
-
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setMobileMenuOpen(false);
@@ -39,12 +36,12 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center gap-2 flex-shrink-0">
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
-              <span className="text-white font-bold text-sm">合</span>
+              <span className="text-white font-bold text-sm">E</span>
             </div>
-            <span className="text-xl font-bold text-gray-900 whitespace-nowrap" style={{ fontFamily: "'Courier New', monospace", letterSpacing: '0.2em' }}>合拍社</span>
+            <span className="text-xl font-extrabold text-gray-900 whitespace-nowrap tracking-tight">{t('brandShort')}</span>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-1">
+          <nav className="hidden lg:flex items-center gap-1">
             {navItems.map((item) => {
               const isActive = location.pathname === item.path;
               return (
@@ -71,14 +68,8 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
             })}
           </nav>
 
-          <div className="hidden md:flex items-center gap-3">
-            <button
-              onClick={toggleLang}
-              className="flex items-center gap-1 px-3 py-2 text-sm text-gray-600 hover:text-primary transition-colors rounded-lg hover:bg-gray-100"
-            >
-              <Globe className="w-4 h-4" />
-              {lang === 'en' ? 'EN' : '中'}
-            </button>
+          <div className="hidden lg:flex items-center gap-3">
+            <LanguageSwitcher currentLang={lang} onSwitch={setLang} />
             {user ? (
               <button
                 onClick={handleLogout}
@@ -98,7 +89,7 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
 
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
           >
             {mobileMenuOpen ? (
               <X className="w-6 h-6 text-gray-600" />
@@ -115,7 +106,7 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden border-t border-gray-100 bg-white"
+            className="lg:hidden border-t border-gray-100 bg-white"
           >
             <div className="px-4 py-4 space-y-2">
               {navItems.map((item) => {
@@ -155,16 +146,12 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
                     <span className="font-medium">{t('nav.login')}</span>
                   </Link>
                 )}
-                <button
-                  onClick={() => {
-                    toggleLang();
+                <div className="px-4 py-3">
+                  <LanguageSwitcher currentLang={lang} onSwitch={(newLang) => {
+                    setLang(newLang);
                     setMobileMenuOpen(false);
-                  }}
-                  className="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-xl transition-colors"
-                >
-                  <Globe className="w-5 h-5" />
-                  <span className="font-medium">{lang === 'en' ? 'English' : '中文'}</span>
-                </button>
+                  }} />
+                </div>
               </div>
             </div>
           </motion.div>
