@@ -36,7 +36,13 @@ const Home: React.FC = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6"
+                className="text-4xl sm:text-5xl lg:text-6xl text-gray-900 mb-6"
+                style={{ 
+                  fontFamily: "'Georgia', 'Times New Roman', serif", 
+                  letterSpacing: '0.2em', 
+                  fontWeight: 400,
+                  wordSpacing: '0.3em'
+                }}
               >
                 {t('brand')}
               </motion.h1>
