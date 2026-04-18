@@ -6,7 +6,8 @@ import HeroIllustration from '../components/HeroIllustration';
 import { useTranslation } from 'react-i18next';
 
 const Home: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isZh = i18n.language === 'zh';
 
   const features = [
     {
@@ -36,9 +37,10 @@ const Home: React.FC = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 tracking-tight"
+                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl tracking-wide mb-6"
               >
-                {t('brand')}
+                <span className="font-extrabold text-orange-500">{isZh ? '合拍' : 'Ember'}</span>
+                <span className="font-normal text-gray-800">{isZh ? '社' : 'Sports'}</span>
               </motion.h1>
               <motion.p
                 initial={{ opacity: 0, y: 20 }}

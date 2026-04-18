@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, User, Home, Menu, X } from 'lucide-react';
 import { supabase } from '../supabase/client';
 import { useTranslation } from '../hooks/useTranslation';
+import { useTranslation as useReactI18nextTranslation } from 'react-i18next';
 import LanguageSwitcher from './LanguageSwitcher';
 
 interface HeaderProps {
@@ -14,6 +15,8 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { t, lang, setLang } = useTranslation();
+  const { i18n } = useReactI18nextTranslation();
+  const isZh = i18n.language === 'zh';
 
   const navItems = [
     { path: '/', label: t('nav.home'), icon: Home },
@@ -35,10 +38,13 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center gap-2 flex-shrink-0">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
+            <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-amber-500 rounded-xl shadow-md flex items-center justify-center flex-shrink-0">
               <span className="text-white font-bold text-sm">E</span>
             </div>
-            <span className="text-xl font-extrabold text-gray-900 whitespace-nowrap tracking-tight">{t('brandShort')}</span>
+            <span className="text-2xl tracking-wide whitespace-nowrap">
+              <span className="font-extrabold text-orange-500">{isZh ? '合拍' : 'Ember'}</span>
+              <span className="font-normal text-gray-800">{isZh ? '社' : 'Sports'}</span>
+            </span>
           </Link>
 
           <nav className="hidden lg:flex items-center gap-1">
