@@ -131,5 +131,23 @@
     "save": "Save",
     "dismiss": "Dismiss",
     "hour": "hour"
+  },
+  "footer": {
+    "description": "Shanghai's premier pickleball venue. Professional courts, flexible booking, unforgettable games.",
+    "quickLinks": "Quick Links",
+    "contact": "Contact",
+    "address": "Shanghai, China",
+    "phone": "+86 XXX XXXX XXXX",
+    "email": "info@embersports.com",
+    "copyright": "© year Ember Sports. All rights reserved.",
+    "home": "Home",
+    "booking": "Book a Court",
+    "myBookings": "My Bookings"
+  },
+  "notFound": {
+    "title": "404",
+    "heading": "Page Not Found",
+    "description": "The page you're looking for doesn't exist or has been moved.",
+    "goHome": "Go Home"
   }
 }

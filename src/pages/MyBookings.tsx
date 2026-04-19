@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Calendar, Clock, AlertCircle } from 'lucide-react';
 import { supabase } from '../supabase/client';
 import { useTranslation } from 'react-i18next';
+import Skeleton from '../components/Skeleton';
 
 interface MyBookingsProps {
   user: any;
@@ -73,12 +74,11 @@ const MyBookings: React.FC<MyBookingsProps> = ({ user }) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity }}
-          className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full"
-        />
+      <div className="min-h-screen bg-gray-50 py-4 sm:py-8 px-3 sm:px-4">
+        <div className="max-w-4xl mx-auto">
+          <Skeleton className="h-9 w-48 mb-6" />
+          <Skeleton className="h-24 rounded-2xl" count={3} />
+        </div>
       </div>
     );
   }
@@ -102,7 +102,7 @@ const MyBookings: React.FC<MyBookingsProps> = ({ user }) => {
         )}
 
         {bookings.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-2xl">
+          <div className="text-center py-12 bg-white rounded-2xl shadow-sm">
             <Calendar className="w-10 h-10 text-gray-300 mx-auto mb-3" />
             <p className="text-gray-500">{t('myBookings.empty')}</p>
           </div>
@@ -115,7 +115,7 @@ const MyBookings: React.FC<MyBookingsProps> = ({ user }) => {
                   key={b.id}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="bg-white p-4 rounded-xl border border-gray-100"
+                  className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm"
                 >
                   <div className="flex flex-col gap-3">
                     <div className="flex items-center justify-between">

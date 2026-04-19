@@ -131,5 +131,23 @@
     "save": "保存",
     "dismiss": "关闭",
     "hour": "小时"
+  },
+  "footer": {
+    "description": "上海首选匹克球场地。专业球场、灵活预订、畅享运动。",
+    "quickLinks": "快捷链接",
+    "contact": "联系我们",
+    "address": "中国上海",
+    "phone": "+86 XXX XXXX XXXX",
+    "email": "info@embersports.com",
+    "copyright": "© year 合拍社 版权所有",
+    "home": "首页",
+    "booking": "预订球场",
+    "myBookings": "我的预订"
+  },
+  "notFound": {
+    "title": "404",
+    "heading": "页面未找到",
+    "description": "您访问的页面不存在或已被移动。",
+    "goHome": "返回首页"
   }
 }

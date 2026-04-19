@@ -6,6 +6,7 @@ import { format, addDays, startOfWeek, isSameDay } from 'date-fns';
 import { zhCN, enUS } from 'date-fns/locale';
 import { useTranslation } from 'react-i18next';
 import { sendBookingReceipt } from '../utils/email';
+import Skeleton from '../components/Skeleton';
 
 interface Court {
   id: string;
@@ -239,12 +240,26 @@ const BookingPage: React.FC<{ user: any }> = ({ user }) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-          className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full"
-        />
+      <div className="min-h-screen bg-gray-50 py-4 md:py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="p-4 md:p-6 border-b border-gray-100">
+              <Skeleton className="h-9 w-48 mb-4" />
+              <div className="flex items-center gap-2">
+                {Array.from({ length: 7 }, (_, i) => (
+                  <Skeleton key={i} className="flex-1 h-16 rounded-xl" />
+                ))}
+              </div>
+            </div>
+            <div className="p-4 md:p-6">
+              <div className="grid grid-cols-5 gap-2">
+                {Array.from({ length: 15 }, (_, i) => (
+                  <Skeleton key={i} className="h-10 rounded-lg" />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -374,7 +389,7 @@ const BookingPage: React.FC<{ user: any }> = ({ user }) => {
               initial={{ scale: 0.95, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 20 }}
-              className="bg-white rounded-t-2xl sm:rounded-2xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto"
+              className="bg-white rounded-t-2xl sm:rounded-2xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto shadow-xl"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-6">
@@ -439,7 +454,7 @@ const BookingPage: React.FC<{ user: any }> = ({ user }) => {
               initial={{ scale: 0.95, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 20 }}
-              className="bg-white rounded-t-2xl sm:rounded-2xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto"
+              className="bg-white rounded-t-2xl sm:rounded-2xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto shadow-xl"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-6">

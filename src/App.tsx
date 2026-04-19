@@ -5,14 +5,17 @@ import { I18nextProvider } from 'react-i18next';
 import { User } from '@supabase/supabase-js';
 import i18n from './i18n';
 import Header from './components/Header';
+import Footer from './components/Footer';
 import Home from './pages/Home';
 import Booking from './pages/Booking';
 import MyBookings from './pages/MyBookings';
 import Login from './pages/Login';
 import AuthCallback from './pages/AuthCallback';
 import Onboarding from './pages/Onboarding';
+import NotFound from './pages/NotFound';
 import { supabase } from './supabase/client';
 import ErrorBoundary from './components/ErrorBoundary';
+import BackToTop from './components/BackToTop';
 
 function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -56,7 +59,10 @@ function App() {
             <Route path="/booking" element={<Booking user={user} />} />
             <Route path="/my-bookings" element={user ? <MyBookings user={user} /> : <Navigate to="/login" />} />
             <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
+          <Footer />
+          <BackToTop />
         </div>
       </HashRouter>
     </I18nextProvider>
