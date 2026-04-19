@@ -72,7 +72,7 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
           </nav>
 
           <div className="hidden lg:flex items-center gap-3">
-            <LanguageSwitcher currentLang={lang} onSwitch={setLang} />
+            <LanguageSwitcher currentLang={lang} onSwitch={setLang} variant="light" />
             {user ? (
               <button
                 onClick={handleLogout}
@@ -150,11 +150,11 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
                     <span className="font-medium">{t('nav.login')}</span>
                   </Link>
                 )}
-                <div className="px-4 py-3">
+                <div className="flex justify-center pt-2 pb-1">
                   <LanguageSwitcher currentLang={lang} onSwitch={(newLang) => {
                     setLang(newLang);
                     setMobileMenuOpen(false);
-                  }} />
+                  }} variant="dark" />
                 </div>
               </div>
             </div>
