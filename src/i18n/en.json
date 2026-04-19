@@ -68,6 +68,18 @@
     "receipt": {
       "sent": "Booking confirmation sent!",
       "logged": "Booking confirmation logged to console"
+    },
+    "info": {
+      "title": "Court Information",
+      "pricing": "Pricing",
+      "hours": "Operating Hours",
+      "hoursValue": "Open daily 8:00 AM – 10:00 PM",
+      "hoursNote": "Last booking starts at 9:00 PM",
+      "courtsAvailable": "8 professional pickleball courts",
+      "policy": "Booking Policy",
+      "policyCancel": "Free cancellation up to 2 hours before your slot",
+      "policyArrive": "Please arrive 10 minutes early",
+      "policyPayment": "Payment required to confirm booking"
     }
   },
   "myBookings": {

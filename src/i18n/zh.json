@@ -68,6 +68,18 @@
     "receipt": {
       "sent": "预订确认已发送！",
       "logged": "预订确认已记录到控制台"
+    },
+    "info": {
+      "title": "球场信息",
+      "pricing": "价格",
+      "hours": "营业时间",
+      "hoursValue": "每日 8:00 – 22:00",
+      "hoursNote": "最晚预订时间为 21:00",
+      "courtsAvailable": "8 片专业匹克球场地",
+      "policy": "预订须知",
+      "policyCancel": "开场前 2 小时可免费取消",
+      "policyArrive": "请提前 10 分钟到场",
+      "policyPayment": "需支付确认预订"
     }
   },
   "myBookings": {

@@ -150,7 +150,35 @@
     <div class="max-w-7xl mx-auto">
         <span class="inline-block bg-[#F4611A]/10 text-[#F4611A] text-xs font-bold px-3 py-1 rounded-full mb-2 uppercase tracking-wider" data-i18n="booking_badge">Reservations</span>
         <h2 class="text-3xl sm:text-4xl font-black tracking-tight mb-2" data-i18n="booking_title">Book your court</h2>
-        <p class="text-slate-500 text-sm sm:text-base mb-8" data-i18n="booking_subtitle">Pick a date, then click any available slot to reserve it.</p>
+        <p class="text-slate-500 text-sm sm:text-base mb-4" data-i18n="booking_subtitle">Pick a date, then click any available slot to reserve it.</p>
+
+        <!-- Court Info Summary -->
+        <div class="bg-white rounded-xl border border-slate-100 p-4 mb-6">
+            <div class="grid sm:grid-cols-3 gap-4 text-sm">
+                <div>
+                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Pricing</span>
+                    <div class="mt-1 space-y-0.5">
+                        <div class="flex justify-between"><span class="text-slate-600">Standard</span><span class="font-medium text-[#F4611A]">¥80/hr</span></div>
+                        <div class="flex justify-between"><span class="text-slate-600">VIP</span><span class="font-medium text-[#F4611A]">¥120/hr</span></div>
+                        <div class="flex justify-between"><span class="text-slate-600">Training</span><span class="font-medium text-[#F4611A]">¥60/hr</span></div>
+                    </div>
+                </div>
+                <div>
+                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Hours</span>
+                    <p class="mt-1 text-slate-600">Open daily 8:00 AM – 10:00 PM</p>
+                    <p class="text-xs text-slate-400 mt-0.5">8 professional courts</p>
+                </div>
+                <div>
+                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Policy</span>
+                    <ul class="mt-1 text-slate-600 text-xs space-y-0.5">
+                        <li>• Free cancellation up to 2h before</li>
+                        <li>• Arrive 10 minutes early</li>
+                        <li>• Payment required to confirm</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
         <div class="flex gap-2 mb-6 overflow-x-auto pb-2" id="datePicker"></div>
         <div class="flex gap-4 mb-4 text-xs text-slate-500">
             <span class="flex items-center gap-1.5"><span class="w-3 h-3 bg-white border border-slate-200 rounded inline-block"></span> <span data-i18n="booking_available">Available</span></span>

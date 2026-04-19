@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Clock, MapPin, AlertTriangle, CheckCircle, CreditCard } from 'lucide-react';
+import { X, Clock, MapPin, AlertTriangle, CheckCircle, CreditCard, Info, Calendar, Shield } from 'lucide-react';
 import { supabase } from '../supabase/client';
 import { format, addDays, startOfWeek, isSameDay } from 'date-fns';
 import { zhCN, enUS } from 'date-fns/locale';
@@ -275,9 +275,89 @@ const BookingPage: React.FC<{ user: any }> = ({ user }) => {
       )}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Court Information Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="mb-6 bg-white rounded-2xl border border-gray-100 overflow-hidden"
+        >
+          <div className="p-4 md:p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <Info className="w-4 h-4 text-primary" />
+              <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">{t('booking.info.title')}</h2>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-6">
+              {/* Pricing */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <CreditCard className="w-3.5 h-3.5" />
+                  {t('booking.info.pricing')}
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-600">{t('pricing.standard')}</span>
+                    <span className="font-semibold text-primary">¥80{t('pricing.perHour')}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-600">{t('pricing.vip')}</span>
+                    <span className="font-semibold text-primary">¥120{t('pricing.perHour')}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-600">{t('pricing.training')}</span>
+                    <span className="font-semibold text-primary">¥60{t('pricing.perHour')}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Operating Hours */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <Calendar className="w-3.5 h-3.5" />
+                  {t('booking.info.hours')}
+                </div>
+                <div className="text-sm text-gray-600">
+                  <p className="font-medium text-gray-900">{t('booking.info.hoursValue')}</p>
+                  <p className="mt-1 text-gray-500">{t('booking.info.hoursNote')}</p>
+                </div>
+                <div className="text-xs text-gray-500">
+                  <span className="inline-flex items-center gap-1">
+                    <MapPin className="w-3 h-3" />
+                    {t('booking.info.courtsAvailable')}
+                  </span>
+                </div>
+              </div>
+
+              {/* Policy */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <Shield className="w-3.5 h-3.5" />
+                  {t('booking.info.policy')}
+                </div>
+                <ul className="space-y-1.5 text-sm text-gray-600">
+                  <li className="flex items-start gap-2">
+                    <span className="text-primary mt-1">•</span>
+                    <span>{t('booking.info.policyCancel')}</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-primary mt-1">•</span>
+                    <span>{t('booking.info.policyArrive')}</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-primary mt-1">•</span>
+                    <span>{t('booking.info.policyPayment')}</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
           className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"
         >
           <div className="p-4 md:p-6 border-b border-gray-100">

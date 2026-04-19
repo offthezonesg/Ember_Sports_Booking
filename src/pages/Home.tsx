@@ -90,36 +90,7 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-xl md:text-2xl font-semibold text-gray-900 mb-4">{t('pricing.title')}</h2>
-            <p className="text-gray-600">{t('pricing.subtitle')}</p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              { name: t('pricing.standard'), price: 80, desc: t('pricing.standardDesc') },
-              { name: t('pricing.vip'), price: 120, desc: t('pricing.vipDesc') },
-              { name: t('pricing.training'), price: 60, desc: t('pricing.trainingDesc') },
-            ].map((item, index) => (
-              <motion.div
-                key={item.name}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.3, delay: index * 0.1 }}
-                className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100"
-              >
-                <h3 className="text-lg font-semibold text-gray-900 mb-1">{item.name}</h3>
-                <p className="text-sm text-gray-500 mb-4">{item.desc}</p>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-3xl font-bold text-primary">¥{item.price}</span>
-                  <span className="text-gray-500">{t('pricing.perHour')}</span>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+
     </div>
   );
 };
