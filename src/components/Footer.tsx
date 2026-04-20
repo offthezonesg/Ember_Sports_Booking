@@ -24,10 +24,7 @@ const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
           {/* Column 1: Brand */}
           <div className="space-y-4">
-            <Link to="/" className="inline-flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-amber-500 rounded-xl shadow-md flex items-center justify-center flex-shrink-0">
-                <span className="text-white font-bold text-sm">E</span>
-              </div>
+            <Link to="/" className="inline-flex items-center">
               <span className="text-2xl tracking-wide whitespace-nowrap">
                 <span className="font-extrabold text-orange-500">{isZh ? '合拍' : 'Ember'}</span>
                 <span className="font-normal text-white">{isZh ? '社' : 'Sports'}</span>
